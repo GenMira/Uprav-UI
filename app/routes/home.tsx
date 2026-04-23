@@ -3,7 +3,17 @@ import { useState } from "react";
 import {AddTask} from "../components/add-task";
 import { Welcome } from "../welcome/welcome";
 import { ShowTask } from "../components/show-tasks";
+import { redirect } from "react-router";
 
+// export async function loader() {
+//   const user = await checkAuth();
+
+//   if (!user) {
+//     return redirect("/login");
+//   }
+
+//   return { user };
+// }
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -12,8 +22,19 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
+export function checkAuth():boolean{
+  return(
+    true
+  );
+}
+
 export default function Home() {
   const [activeTab, setActiveTab] = useState("showTasks");
+  const [tasks,setTasks] = useState<string[]>([]);
+
+  const handleAddTask = (newTask: string) => {
+    setTasks([...tasks, newTask]); 
+  };
 
   return (
     <div className="flex h-screen w-full bg-gray-50">
@@ -43,11 +64,10 @@ export default function Home() {
         </button>
       </nav>
 
-      {/* 右側：メインコンテンツ (残りの幅をすべて使う) */}
       <main className="flex-1 p-10 overflow-y-auto">
-        {activeTab === "addTask" && <AddTask />}
+        {activeTab === "addTask" && <AddTask onAddTask={handleAddTask}/>}
         {activeTab === "welcome" && <Welcome />}
-        {activeTab === "showTasks" && <ShowTask />}
+        {activeTab === "showTasks" && <ShowTask tasks={tasks} />}
       </main>
       
     </div>
@@ -62,3 +82,4 @@ export default function Home() {
 /*space-y-4	子要素の間に垂直方向のスペースを設けます（4 は 1rem = 16px 程度）。 */
 /*max-w-[300px]	最大幅を300pxに制限*/
 /*px-4	左右のパディング	内側の左右に 1rem (16px) の余白を作ります。 */
+/*shadow-sm　影をつける */
