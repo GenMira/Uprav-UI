@@ -39,8 +39,7 @@ export default function Home() {
   return (
     <div className="flex h-screen w-full bg-gray-50">
       
-      <nav className="w-64 border-r bg-[rgba(58,196,178,1)] p-6 space-y-4">
-        <h2 className="font-bold text-xl mb-8">Uprav</h2>
+      <nav className="hidden md:flex md:flex-col md:w-40 lg:w-64 border-r bg-[rgba(58,196,178,1)] p-6 space-y-4">        <h2 className="font-bold text-xl mb-8">Uprav</h2>
         
         <button 
           onClick={() => setActiveTab("showTasks")}
