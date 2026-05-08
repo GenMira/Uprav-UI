@@ -1,8 +1,49 @@
-interface AddTaskProps {
-  onAddTask: (task: string) => void;
+import { useState } from "react";
+// interface AddTaskProps {
+//   onAddTask: (task: string) => void;
+// }
+interface TaskRequest{
+  uid: string;
+  name: string;
+  priority: number;
+  tag: string;
+  deadline: string; 
+  period?: string | null; 
+  group?: string | null;  
+  assign?: string | null;
 }
 
-export function AddTask({ onAddTask }: AddTaskProps) {
+
+//export function AddTask({ onAddTask }: AddTaskProps) {
+export function AddTask() {
+  const addTask = async (taskName:string) =>{
+    const newTask: TaskRequest ={
+      uid:"550e8400-e29b-41d4-a716-446655440000",
+      name: taskName,
+      priority: 1,
+      tag: "test",
+      deadline: new Date().toISOString(),
+    };
+
+    try{
+      const response = await fetch("https://uprav.trap.show/api/newtask",{
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(newTask)
+      });
+
+      if (!response.ok){
+        throw new Error("追加に失敗しました");
+      }
+      console.log("success:add Task");
+
+    } catch (error) {
+      console.error("Error adding task:", error);
+    }
+  };
+
   return(
     <div className="flex flex-col items-center h-80 bg-gray-100 rounded-2xl">
       <div className="h-1/3 w-full flex items-end justify-center">
@@ -20,7 +61,7 @@ export function AddTask({ onAddTask }: AddTaskProps) {
           onClick={() => {
             const input = document.querySelector('input') as HTMLInputElement;
             if (input) {
-              onAddTask(input.value);
+              addTask(input.value);
               input.value = '';
             }
           }}

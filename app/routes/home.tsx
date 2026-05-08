@@ -30,11 +30,11 @@ export function checkAuth():boolean{
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState("showTasks");
-  const [tasks,setTasks] = useState<string[]>([]);
+  // const [tasks,setTasks] = useState<string[]>([]);
 
-  const handleAddTask = (newTask: string) => {
-    setTasks([...tasks, newTask]); 
-  };
+  // const handleAddTask = (newTask: string) => {
+  //   setTasks([...tasks, newTask]); 
+  // };
 
   return (
     <div className="flex h-screen w-full bg-gray-50">
@@ -64,9 +64,10 @@ export default function Home() {
       </nav>
 
       <main className="flex-1 p-10 overflow-y-auto">
-        {activeTab === "addTask" && <AddTask onAddTask={handleAddTask}/>}
+        {/* {activeTab === "addTask" && <AddTask onAddTask={handleAddTask}/>} */}
+        {activeTab === "addTask" && <AddTask />}
         {activeTab === "welcome" && <Welcome />}
-        {activeTab === "showTasks" && <ShowTask tasks={tasks} />}
+        {activeTab === "showTasks" && <ShowTask />}
       </main>
       
     </div>
