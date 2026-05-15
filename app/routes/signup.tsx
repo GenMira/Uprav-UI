@@ -1,21 +1,21 @@
 import { useState } from "react";
 
-interface LoginRequest{
+interface SignupRequest{
   username: string;
   password: string;
 }
-export default function Login() {
+export default function SignUp() {
   const [userName,setUserName]=useState("");
   const [password,setPassword]=useState("");
 
-    const login = async () => {
-    const userInfo: LoginRequest = {
+    const Signup = async () => {
+    const userInfo: SignupRequest = {
       username: userName,
       password: password
     };
 
     try {
-      const response = await fetch("https://uprav.trap.show/api/login", {
+      const response = await fetch("https://uprav.trap.show/api/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -24,11 +24,11 @@ export default function Login() {
       });
 
       if (!response.ok) {
-        throw new Error("ログインに失敗しました");
+        throw new Error("サインアップに失敗しました");
       }
-      console.log("success:login");
+      console.log("success:signup");
     } catch (error) {
-      console.error("Error login:", error);
+      console.error("Error signup:", error);
     }
   };
 
@@ -36,7 +36,7 @@ export default function Login() {
     <div className="flex flex-col h-screen w-full bg-gray-100 justify-center items-center">
       <div className="flex flex-col w-[50%] h-[65%] justify-center bg-white items-center gap-5 p-6 rounded-xl">
         <h1 className="text-4xl font-bold text-gray-800 mb-6">
-          ログイン
+          新規登録
         </h1>
         <div className="flex flex-col w-full justify-center items-center mt-15 gap-5">
           <label className="w-[60%] items-start font-semibold">
@@ -64,9 +64,9 @@ export default function Login() {
         </div>
         <button
           className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 mt-15"
-          onClick={() => login()}
+          onClick={() => Signup()}
         >
-          Login
+          登録
         </button>
       </div>
     </div>
