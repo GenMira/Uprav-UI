@@ -18,20 +18,14 @@ export function AddTask() {
   const [taskName, setTaskName] = useState("");
   const [tagName, setTagName] = useState("");
   const [priority, setPriority] = useState<number>(0);
+  const [deadline, setDeadline] = useState("");
+  const [isEverydayTask, setIsEverydayTask] = useState<boolean>(false);
 
   const today = new Date().toLocaleDateString("sv-SE");
 
   const addTask = async () => {
-    const newTask: TaskRequest = {
-      uid: "550e8400-e29b-41d4-a716-446655440000",
-      name: taskName,
-      priority: priority,
-      tag: tagName,
-      deadline: new Date().toISOString(),
-    };
-
     if(!taskName.trim()) {
-      alert("必須事項を入力してください。");
+      alert("タスク名を入力してください。");
       return;
     }
 
@@ -39,6 +33,25 @@ export function AddTask() {
       alert("優先度は1から5の数値で指定してください。");
       return;
     }
+    if(!deadline){
+      alert("締切日を指定してください。");
+      return;
+    }
+
+    let formattedDeadline = "";
+    if (isEverydayTask) {
+      formattedDeadline = "2006-05-11T00:00:00.000+09:00";
+    } else {
+      formattedDeadline = `${deadline}T00:00:00+09:00`;
+    }
+
+    const newTask: TaskRequest = {
+      uid: "550e8400-e29b-41d4-a716-446655440000",
+      name: taskName,
+      priority: priority,
+      tag: tagName,
+      deadline: formattedDeadline,
+    };
 
     try {
       const response = await fetch("https://uprav.trap.show/api/newtask", {
@@ -104,13 +117,27 @@ export function AddTask() {
           className="w-[60%] p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
-      <div className="flex flex-row w-full w-full justify-center items-center px-6 gap-2 pt-10 pb-10">
-        <div className="w-[20%]">タスクの締切</div>
-        <input
-          type="date"
-          min={today}
-          className="w-[60%] p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
+      <div className="flex flex-col w-full w-full justify-center items-center px-6 gap-2 pt-10 pb-10">
+        <div className="flex flex-row justify-center items-center w-full">
+          <div className="w-[20%]">タスクの締切</div>
+          <input
+            type="date"
+            min={today}
+            value={deadline}
+            onChange={(e) => setDeadline(e.target.value)}
+            className="w-[60%] p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+        <div className="flex flex-row justify-between items-center w-[80%] pt-4 mx-auto">
+          <div className="text-gray-700">毎日のタスクに設定</div>
+          
+          <input
+            type="checkbox"
+            checked={isEverydayTask}
+            onChange={(e) => setIsEverydayTask(e.target.checked)}
+            className="w-5 h-5 accent-blue-500 cursor-pointer"
+          />
+        </div>
       </div>
       {/* <div className="flex flex-row w-full w-full justify-center items-center px-6 gap-2 pt-10 pb-10">
         <div className="w-[20%]">完了の目安</div>

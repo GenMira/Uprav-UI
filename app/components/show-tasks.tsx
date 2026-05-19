@@ -54,9 +54,11 @@ export function ShowTask() {
           {tasks.map((task) => (
             <li 
               key={task.uid} 
-              className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-xl hover:bg-gray-100 transition-colors transition-shadow flex items-center justify-center min-h-[120px] text-center break-words"
+              className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-xl hover:bg-gray-100 transition-colors transition-shadow flex flex-col items-center justify-center min-h-[120px] text-center break-words"
             >
-              <span className="text-gray-800 font-medium bg-blue-200">{task.name}</span>
+              <span className="text-gray-800 font-semibold">{task.name}</span>
+              <span className="text-gray-800 pt-2 font-medium">{formatDeadline(task.deadline)}</span>
+              <span className="text-gray-800 pt-2 font-medium">pr:{task.priority}</span>
             </li>
           ))}
         </ul>
@@ -64,3 +66,30 @@ export function ShowTask() {
     </div>
   )
 }
+
+const formatDeadline = (deadline: string): string => {
+  if (!deadline) return "";
+
+  const date = new Date(deadline);
+  
+  // 無効な日付文字列の場合はそのまま返す（エラー防止）
+  if (isNaN(date.getTime())) return deadline;
+
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+
+  const currentYear = new Date().getFullYear();
+
+  if(year===2006){
+    return "EveryDay";
+  }
+
+  if (year === currentYear) {
+    // 今年なら「月/日」
+    return `${month}/${day}`;
+  } else {
+    // 今年以外なら「年/月/日」
+    return `${year}/${month}/${day}`;
+  }
+};
