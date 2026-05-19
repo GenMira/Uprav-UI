@@ -19,6 +19,8 @@ export function AddTask() {
   const [tagName, setTagName] = useState("");
   const [priority, setPriority] = useState<number>(0);
 
+  const today = new Date().toLocaleDateString("sv-SE");
+
   const addTask = async () => {
     const newTask: TaskRequest = {
       uid: "550e8400-e29b-41d4-a716-446655440000",
@@ -27,6 +29,16 @@ export function AddTask() {
       tag: tagName,
       deadline: new Date().toISOString(),
     };
+
+    if(!taskName.trim()) {
+      alert("必須事項を入力してください。");
+      return;
+    }
+
+    if (priority > 5||priority < 1) {
+      alert("優先度は1から5の数値で指定してください。");
+      return;
+    }
 
     try {
       const response = await fetch("https://uprav.trap.show/api/newtask", {
@@ -47,12 +59,13 @@ export function AddTask() {
   };
 
   return (
-    <div className="flex flex-col items-center h-80 bg-gray-100 rounded-2xl">
+    <div className="flex flex-col items-center bg-gray-100 rounded-2xl">
+      {/* overflow-y-auto */}
       <div className="h-1/3 w-full flex items-end justify-center">
-        <h2 className="text-xl font-bold">Add Task</h2>
+        <h2 className="text-xl pt-10 font-bold">Add Task</h2>
       </div>
 
-      <div className="flex flex-row w-full w-full justify-center items-center px-6 gap-2 pt-20 bg-cyan-200">
+      <div className="flex flex-row w-full w-full justify-center items-center px-6 gap-2 pt-20 pb-10">
         <div className="w-[20%]">タスク名</div>
         <input
           type="text"
@@ -62,7 +75,7 @@ export function AddTask() {
           className="w-[60%] p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
-      <div className="flex flex-row w-full w-full justify-center items-center px-6 gap-2 pt-20 bg-cyan-200">
+      <div className="flex flex-row w-full w-full justify-center items-center px-6 gap-2 pt-10 pb-10">
         <div className="w-[20%]">タグ</div>
         <input
           type="text"
@@ -72,7 +85,7 @@ export function AddTask() {
           className="w-[60%] p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
-      <div className="flex flex-row w-full w-full justify-center items-center px-6 gap-2 pt-20 bg-cyan-200">
+      <div className="flex flex-row w-full w-full justify-center items-center px-6 gap-2 pt-10 pb-10">
         <div className="w-[20%]">優先度</div>
         <input
           type="number"
@@ -91,13 +104,31 @@ export function AddTask() {
           className="w-[60%] p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
+      <div className="flex flex-row w-full w-full justify-center items-center px-6 gap-2 pt-10 pb-10">
+        <div className="w-[20%]">タスクの締切</div>
+        <input
+          type="date"
+          min={today}
+          className="w-[60%] p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+      {/* <div className="flex flex-row w-full w-full justify-center items-center px-6 gap-2 pt-10 pb-10">
+        <div className="w-[20%]">完了の目安</div>
+        <input
+          type="date"
+          className="w-[60%] p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div> */}
 
-      <button
-        className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
-        onClick={() => addTask()}
-      >
-        追加
-      </button>
+      <div className="flex justify-center items-center pb-10 pt-10w-full">
+        <button
+          className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+          onClick={() => addTask()}
+        >
+          追加
+        </button>
+      </div>
+      
     </div>
     // <div className="flex flex-col items-center h-64 bg-gray-100 rounded-2xl">
     //   {/* 1. タイトルエリア (上から1/3) */}
