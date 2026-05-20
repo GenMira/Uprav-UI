@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router";
 import { Link } from "react-router";
 
 interface LoginRequest{
@@ -6,6 +7,7 @@ interface LoginRequest{
   password: string;
 }
 export default function Login() {
+  const navigate = useNavigate();
   const [userName,setUserName]=useState("");
   const [password,setPassword]=useState("");
 
@@ -25,8 +27,20 @@ export default function Login() {
       });
 
       if (!response.ok) {
-        throw new Error("ログインに失敗しました");
+        try {
+          const errorData = await response.json();
+          
+          if (errorData && errorData.message) {
+            throw new Error(`Error Message : ${errorData.message}`);
+          } else {
+            throw new Error(`Request Failed (Status: ${response.status})`);
+          }
+        } catch (parseError) {
+          // レスポンスがJSON形式ではなかった場合のフォールバック
+          throw new Error(`Error happened (Status: ${response.status})`);
+        }
       }
+
       console.log("success:login");
 
       const data = await response.json();
@@ -37,6 +51,7 @@ export default function Login() {
         //ブラウザの localStorage に「token」という名前で保存する
         localStorage.setItem("token", token);
         console.log("localStorageにトークンを保存しました。");
+        navigate("/", { replace: true });
       }
     } catch (error) {
       console.error("Error login:", error);
