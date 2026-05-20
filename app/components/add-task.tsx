@@ -53,11 +53,18 @@ export function AddTask() {
       deadline: formattedDeadline,
     };
 
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("トークンが見つかりません。ログインしてください。");
+      return;
+    }
+
     try {
       const response = await fetch("https://uprav.trap.show/api/newtask", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
         },
         body: JSON.stringify(newTask),
       });

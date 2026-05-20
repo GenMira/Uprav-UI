@@ -16,11 +16,17 @@ export function ShowTask() {
   const [tasks,setTasks] = useState<TaskResponse[]>([]);
 
   const showTasks = async () =>{
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("トークンが見つかりません。ログインしてください。");
+      return;
+    }
     try{
       const response = await fetch("https://uprav.trap.show/api/tasks",{
         method:"GET",
         headers:{
           "Content-Type":"application/json",
+          "Authorization": `Bearer ${token}`,
         },
       });
       if (!response.ok){

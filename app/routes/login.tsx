@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 interface LoginRequest{
-  username: string;
+  name: string;
   password: string;
 }
 export default function Login() {
@@ -10,7 +10,7 @@ export default function Login() {
 
     const login = async () => {
     const userInfo: LoginRequest = {
-      username: userName,
+      name: userName,
       password: password
     };
 
@@ -27,6 +27,16 @@ export default function Login() {
         throw new Error("ログインに失敗しました");
       }
       console.log("success:login");
+
+      const data = await response.json();
+      const token = data.token;
+
+      console.log(data);
+      if (token) {
+        //ブラウザの localStorage に「token」という名前で保存する
+        localStorage.setItem("token", token);
+        console.log("localStorageにトークンを保存しました。");
+      }
     } catch (error) {
       console.error("Error login:", error);
     }

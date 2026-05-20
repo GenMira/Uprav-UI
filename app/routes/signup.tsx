@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 interface SignupRequest{
-  username: string;
+  name: string;
   password: string;
 }
 export default function SignUp() {
@@ -10,7 +10,7 @@ export default function SignUp() {
 
     const Signup = async () => {
     const userInfo: SignupRequest = {
-      username: userName,
+      name: userName,
       password: password
     };
 
@@ -27,6 +27,16 @@ export default function SignUp() {
         throw new Error("サインアップに失敗しました");
       }
       console.log("success:signup");
+
+      const data = await response.json();
+      const token = data.token;
+
+      console.log(data);
+      if (token) {
+        //ブラウザの localStorage に「token」という名前で保存する
+        localStorage.setItem("token", token);
+        console.log("localStorageにトークンを保存しました。");
+      }
     } catch (error) {
       console.error("Error signup:", error);
     }
