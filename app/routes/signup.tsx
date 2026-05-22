@@ -44,11 +44,16 @@ export default function SignUp() {
 
       const data = await response.json();
       const token = data.token;
+      const userSession = {
+        username: data.name,
+        uid: data.uid
+      };
 
       console.log(data);
       if (token) {
         //ブラウザの localStorage に「token」という名前で保存する
         localStorage.setItem("token", token);
+        localStorage.setItem("userSession", JSON.stringify(userSession));
         console.log("localStorageにトークンを保存しました。");
         navigate("/", { replace: true });
       }

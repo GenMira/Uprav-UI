@@ -37,7 +37,16 @@ export default function Login() {
           }
         } catch (parseError) {
           // レスポンスがJSON形式ではなかった場合のフォールバック
-          throw new Error(`Error happened (Status: ${response.status})`);
+          try {
+            // response.text() で生のレスポンス文字列をそのまま取得する
+            const errorText = await response.text();
+            alert("ログインに失敗しました");
+            throw new Error(errorText || `Error happened (Status: ${response.status})`);
+          } catch (textError) {
+            // テキストの取得すら失敗した場合の最終フォールバック
+            alert("ログインに失敗しました。");
+            throw new Error(`Error happened (Status: ${response.status})`);
+          }
         }
       }
 
@@ -45,11 +54,16 @@ export default function Login() {
 
       const data = await response.json();
       const token = data.token;
+      const userSession = {
+        username: data.name,
+        uid: data.uid
+      };
 
       console.log(data);
       if (token) {
         //ブラウザの localStorage に「token」という名前で保存する
         localStorage.setItem("token", token);
+        localStorage.setItem("userSession", JSON.stringify(userSession));
         console.log("localStorageにトークンを保存しました。");
         navigate("/", { replace: true });
       }
