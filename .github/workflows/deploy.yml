@@ -39,7 +39,10 @@ jobs:
         run: npm run build
 
       - name: SPA 404 Fix
-        run: cp build/client/index.html build/client/404.html
+        run: |
+          if [ -f build/client/index.html ]; then
+            cp build/client/index.html build/client/404.html
+          fi
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
