@@ -23,6 +23,14 @@ export function AddTask() {
 
   const today = new Date().toLocaleDateString("sv-SE");
 
+  const resertForm = () => {
+    setTaskName("");
+    setTagName("");
+    setPriority(0);
+    setDeadline("");
+    setIsEverydayTask(false);
+  }
+
   const addTask = async () => {
     if(!taskName.trim()) {
       alert("タスク名を入力してください。");
@@ -73,6 +81,8 @@ export function AddTask() {
         throw new Error("追加に失敗しました");
       }
       console.log("success:add Task");
+      alert("タスクが追加されました！");
+      resertForm();
     } catch (error) {
       console.error("Error adding task:", error);
     }
