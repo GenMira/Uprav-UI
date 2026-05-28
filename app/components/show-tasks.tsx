@@ -18,9 +18,12 @@ const priorityColors = [
   // "#FF4144"  // 5
   "#77C6FF", // 1
   "#77C6FF", // 2
-  "#74FF3D", //3
-  "#FFAA6D", //4
-  "#FF4144", // 5
+  "#77C6FF", // 1
+  "#77C6FF", // 2
+  "#77C6FF", // 2
+  // "#74FF3D", //3
+  // "#FFAA6D", //4
+  // "#FF4144", // 5
 ];
 
 //export function ShowTask({tasks}:{tasks:string[]}) {
@@ -69,7 +72,8 @@ export function ShowTask() {
         <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {sortTasks(tasks).map((task, index) => {
             const bgClass = priorityColors[task.priority-1] || "#F3F4F6";
-            const isUrgent = task.priority === 5;
+            //const isUrgent = task.priority === 5;
+            const isUrgent = false;
             return(
               <li
                 key={`${task.id}-${index}`}
