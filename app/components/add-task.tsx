@@ -3,11 +3,12 @@ import { useState } from "react";
 //   onAddTask: (task: string) => void;
 // }
 interface TaskRequest {
-  uid: string;
   name: string;
   priority: number;
-  tag: string;
   deadline: string;
+  is_everyday: boolean;
+  tag?: string|null;
+  description?: string| null;
   period?: string | null;
   group?: string | null;
   assign?: string | null;
@@ -20,6 +21,8 @@ export function AddTask() {
   const [priority, setPriority] = useState<number>(0);
   const [deadline, setDeadline] = useState("");
   const [isEverydayTask, setIsEverydayTask] = useState<boolean>(false);
+  const [description, setDescription] = useState("");
+
 
   const today = new Date().toLocaleDateString("sv-SE");
 
@@ -29,6 +32,7 @@ export function AddTask() {
     setPriority(0);
     setDeadline("");
     setIsEverydayTask(false);
+    setDescription("");
   }
 
   const addTask = async () => {
@@ -41,7 +45,7 @@ export function AddTask() {
       alert("優先度は1から5の数値で指定してください。");
       return;
     }
-    if(!deadline){
+    if(!deadline&&!isEverydayTask) {
       alert("締切日を指定してください。");
       return;
     }
@@ -54,12 +58,18 @@ export function AddTask() {
     }
 
     const newTask: TaskRequest = {
-      uid: "550e8400-e29b-41d4-a716-446655440000",
       name: taskName,
       priority: priority,
-      tag: tagName,
       deadline: formattedDeadline,
+      is_everyday: isEverydayTask,
     };
+
+    if (description.trim()) {
+      newTask.description = description;
+    }
+    if (tagName.trim()) {
+      newTask.tag = tagName;
+    }
 
     const token = localStorage.getItem("token");
     if (!token) {
@@ -163,6 +173,16 @@ export function AddTask() {
           className="w-[60%] p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div> */}
+      <div className="flex flex-row w-full w-full justify-center items-center px-6 gap-2 pt-10 pb-10">
+        <div className="w-[20%]">説明</div>
+        <input
+          type="text"
+          placeholder="タスクの詳細..."
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          className="w-[60%] p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
 
       <div className="flex justify-center items-center pb-10 pt-10w-full">
         <button
