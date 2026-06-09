@@ -78,7 +78,7 @@ export function AddTask() {
     }
 
     try {
-      const response = await fetch("https://uprav.trap.show/api/newtask", {
+      const response = await fetch("https://uprav.trap.show/api/tasks", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

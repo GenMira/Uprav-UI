@@ -7,8 +7,8 @@ import { ShowTask } from "../components/show-tasks";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "New React Router App" },
-    { name: "description", content: "Welcome to React Router!" },
+    { title: "Uprav" },
+    { name: "description", content: "task management app" },
   ];
 }
 

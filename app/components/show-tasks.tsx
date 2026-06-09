@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-interface TaskResponse {
+interface Task {
   id: number;
   name: string;
   priority: number;
@@ -16,22 +16,24 @@ const priorityColors = [
   // "#77C6FF", // 1
   // "#DBEAFE", // 2
   // "#33FF94", //3
-  // "#FF6751", //4
   // "#FF4144"  // 5
-  "#77C6FF", // 1
-  "#77C6FF", // 2
-  "#77C6FF", // 1
-  "#77C6FF", // 2
-  "#77C6FF", // 2
   // "#74FF3D", //3
   // "#FFAA6D", //4
-  // "#FF4144", // 5
+  // "#FF4144", // expired
+  
+  "#33FF94", //everyday
+  "#77C6FF", // 1
+  "#77C6FF", // 2
+  "#77C6FF", // 3
+  "#77C6FF", // 4
+  "#77C6FF", // 5
+  "#FF6751", //expired
 ];
 
 //export function ShowTask({tasks}:{tasks:string[]}) {
 export function ShowTask() {
-  const [tasks, setTasks] = useState<TaskResponse[]>([]);
-  const [selectedTask, setSelectedTask] = useState<TaskResponse | null>(null);
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
   const showTasks = async () => {
     const token = localStorage.getItem("token");
@@ -59,6 +61,70 @@ export function ShowTask() {
     }
   };
 
+  const deleteTask = async (task: Task) => {
+    const token = localStorage.getItem("token");
+    const taskId = task.id;
+    if (!token) {
+      alert("トークンが見つかりません。ログインしてください。");
+      return;
+    }
+    console.log("delete task id: " + taskId);
+    try {
+      const response = await fetch(`https://uprav.trap.show/api/tasks/${taskId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to delete task");
+      }
+      console.log("success: task deleted (id: " + taskId + ")");
+      setTasks(tasks.filter((task) => task.id !== taskId));
+    } catch (error) {
+      console.error("エラー:", error);
+      alert("通信エラーが発生しました");
+    }
+  };
+
+  const updateTask = async (taskId: number, updatedTask: Task) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("トークンが見つかりません。ログインしてください。");
+      return;
+    }
+    console.log("update task id: " + taskId);
+    try {
+      const response = await fetch(`https://uprav.trap.show/api/tasks/${taskId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(updatedTask),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to update task");
+      }
+      console.log("success: task updated (id: " + taskId + ")");
+    } catch (error) {
+      console.error("エラー:", error);
+      alert("通信エラーが発生しました");
+    }
+  };
+
+  const doneEverydaytask = async (task: Task) => {
+    console.log("Done everyday task id: " + task.id);
+    const today = new Date().toLocaleDateString("sv-SE");
+    const DoneTask: Task = {
+      ...task,
+      deadline: `${today}T00:00:00Z`,
+    };
+    await updateTask(task.id, DoneTask);
+    setTasks(tasks.filter((tasks) => tasks.id !== task.id ));
+  };
+
   useEffect(() => {
     showTasks();
   }, []);
@@ -77,35 +143,56 @@ export function ShowTask() {
 
       <div className="flex flex-col p-6">
         <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {sortTasks(tasks).map((task, index) => {
-            const bgClass = priorityColors[task.priority-1] || "#F3F4F6";
-            //const isUrgent = task.priority === 5;
-            const isUrgent = false;
-            return(
-              <li
-                key={`${task.id}-${index}`}
-                style={{ backgroundColor: bgClass }}
-                onClick={() => setSelectedTask(task)}
-                className="card-interactive"
-              >
-                <span className={`${isUrgent ? 'text-white font-bold' : 'text-gray-800 font-semibold'}`}>
-                  {task.name}
-                </span>
-                <div className="flex flex-row items-center gap-1 pt-2">
-                  <img src="https://img.icons8.com/?size=15&id=H0JqzxqGxPQm&format=png&color=000000" alt="from Icons8" />
-                  <span className={`${isUrgent ? 'text-white' : 'text-gray-800'}font-medium`}>
-                    {formatDeadline(task.deadline, task.is_everyday)}
+          {sortTasks(tasks)
+            .filter((task) =>{
+              if (task.is_everyday) {
+                const today = new Date().toLocaleDateString("sv-SE");
+                const isDoneToday = task.deadline.startsWith(today);
+                
+                return !isDoneToday;
+              }
+              return true;
+            })
+            .map((task, index) => {
+              let bgClass = "#F3F4F6";
+
+              if (task.is_everyday) {
+                bgClass = priorityColors[0];
+              } 
+              else if (isExpired(task.deadline)) {
+                bgClass = priorityColors[6];
+              } 
+              else {
+                bgClass = priorityColors[task.priority] || "#F3F4F6";
+              }
+
+              //const isUrgent = task.priority === 5;
+              const isUrgent = false;
+              return(
+                <li
+                  key={`${task.id}-${index}`}
+                  style={{ backgroundColor: bgClass }}
+                  onClick={() => setSelectedTask(task)}
+                  className="card-interactive"
+                >
+                  <span className={`${isUrgent ? 'text-white font-bold' : 'text-gray-800 font-semibold'}`}>
+                    {task.name}
                   </span>
-                </div>
-                <div className="flex flex-row items-center gap-1 pt-2">
-                  <img src="https://img.icons8.com/?size=15&id=5342&format=png&color=000000" alt="from Icons8" />
-                  <span className={`${isUrgent ? 'text-white' : 'text-gray-800'} font-medium`}>
-                      {task.priority}
-                  </span>
-                </div>
-              </li>
-            )
-          })}
+                  <div className="flex flex-row items-center gap-1 pt-2">
+                    <img src="https://img.icons8.com/?size=15&id=H0JqzxqGxPQm&format=png&color=000000" alt="from Icons8" />
+                    <span className={`${isUrgent ? 'text-white' : 'text-gray-800'}font-medium`}>
+                      {formatDeadline(task.deadline, task.is_everyday)}
+                    </span>
+                  </div>
+                  <div className="flex flex-row items-center gap-1 pt-2">
+                    <img src="https://img.icons8.com/?size=15&id=5342&format=png&color=000000" alt="from Icons8" />
+                    <span className={`${isUrgent ? 'text-white' : 'text-gray-800'} font-medium`}>
+                        {task.priority}
+                    </span>
+                  </div>
+                </li>
+              )
+            })}
         </ul>
       </div>
 
@@ -115,40 +202,40 @@ export function ShowTask() {
           onClick={() => setSelectedTask(null)}
         >
           <div 
-            className="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl relative"
+            className="bg-white rounded-2xl p-10 max-w-xl w-full mx-4 shadow-2xl relative"
             onClick={(e) => e.stopPropagation()}
           >
             <button 
               onClick={() => setSelectedTask(null)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl"
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl"
             >
               ✕
             </button>
 
-            <h3 className="text-xl font-bold text-gray-800 mb-4 border-b pb-2">
+            <h3 className="text-2xl font-bold text-gray-800 mb-4 border-b pb-5">
               {selectedTask.name}
             </h3>
             
             <div className="space-y-3 text-left">
               <div>
-                <p className="text-xs text-gray-400 font-bold">期限</p>
-                <p className="text-sm text-gray-700">{formatDeadline(selectedTask.deadline, selectedTask.is_everyday)}</p>
+                <p className="text-sm text-gray-400 font-bold">期限</p>
+                <p className="text-base text-gray-700">{formatDeadline(selectedTask.deadline, selectedTask.is_everyday)}</p>
               </div>
 
               <div>
-                <p className="text-xs text-gray-400 font-bold">優先度</p>
+                <p className="text-sm text-gray-400 font-bold">優先度</p>
                 {/* <span className="inline-block text-xs font-bold px-2 py-1 rounded bg-gray-100 mt-1">
                   {selectedTask.priority}
                 </span> */}
-               <span className="text-sm text-gray-700">
+               <span className="text-base text-gray-700">
                   {selectedTask.priority}
                 </span>
               </div>
 
               {selectedTask.tag && (
                 <div>
-                  <p className="text-xs text-gray-400 font-bold">タグ</p>
-                  <span className="inline-block text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded mt-1">
+                  <p className="text-sm text-gray-400 font-bold">タグ</p>
+                  <span className="inline-block text-base bg-blue-50 text-blue-600 px-2 py-0.5 rounded mt-1">
                     #{selectedTask.tag}
                   </span>
                 </div>
@@ -156,17 +243,33 @@ export function ShowTask() {
               
               {selectedTask.assign && (
                 <div>
-                  <p className="text-xs text-gray-400 font-bold">担当者</p>
-                  <p className="text-sm text-gray-700">👤 {selectedTask.assign}</p>
+                  <p className="text-sm text-gray-400 font-bold">担当者</p>
+                  <p className="text-base text-gray-700">👤 {selectedTask.assign}</p>
                 </div>
               )}
 
               {selectedTask.description && (
                 <div>
-                  <p className="text-xs text-gray-400 font-bold">詳細</p>
-                  <p className="text-sm text-gray-700">{selectedTask.description}</p>
+                  <p className="text-sm text-gray-400 font-bold">詳細</p>
+                  <p className="text-base text-gray-700">{selectedTask.description}</p>
                 </div>
               )}
+
+              <div className="flex justify-center items-center pt-5 pt-10w-full">
+                <button
+                  className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+                  onClick={() => {
+                    if (selectedTask.is_everyday) {
+                      doneEverydaytask(selectedTask);
+                    } else {
+                      deleteTask(selectedTask);
+                    }
+                    setSelectedTask(null);
+                  }}
+                >
+                  完了
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -198,7 +301,14 @@ const formatDeadline = (deadline: string, isEveryday: boolean): string => {
   }
 };
 
-const sortTasks = (tasks: TaskResponse[]): TaskResponse[] => {
+const isExpired = (deadline: string): boolean => {
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const date = new Date(deadline);
+  return date < today;
+}
+
+const sortTasks = (tasks: Task[]): Task[] => {
   const now = new Date();
   
   // 基準となる「今日」の「時刻」を 00:00:00.000 にリセットして日付のみで比較できるようにする
