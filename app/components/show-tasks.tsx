@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import toast from 'react-hot-toast';
 
 interface Task {
   id: number;
@@ -46,7 +47,7 @@ export function ShowTask({ setEditingTaskID, setActiveTab }: ShowTaskProps) {
   const showTasks = async () => {
     const token = localStorage.getItem("token");
     if (!token) {
-      alert("トークンが見つかりません。ログインしてください。");
+      toast.error("トークンが見つかりません。ログインしてください。");
       return;
     }
     try {
@@ -65,7 +66,7 @@ export function ShowTask({ setEditingTaskID, setActiveTab }: ShowTaskProps) {
       setTasks(tasks);
     } catch (error) {
       console.error("エラー:", error);
-      alert("通信エラーが発生しました");
+      toast.error("通信エラーが発生しました");
     }
   };
 
@@ -73,7 +74,7 @@ export function ShowTask({ setEditingTaskID, setActiveTab }: ShowTaskProps) {
     const token = localStorage.getItem("token");
     const taskId = task.id;
     if (!token) {
-      alert("トークンが見つかりません。ログインしてください。");
+      toast.error("トークンが見つかりません。ログインしてください。");
       return;
     }
     console.log("delete task id: " + taskId);
@@ -92,14 +93,14 @@ export function ShowTask({ setEditingTaskID, setActiveTab }: ShowTaskProps) {
       setTasks(tasks.filter((task) => task.id !== taskId));
     } catch (error) {
       console.error("エラー:", error);
-      alert("通信エラーが発生しました");
+      toast.error("通信エラーが発生しました");
     }
   };
 
   const updateTask = async (taskId: number, updatedTask: Task) => {
     const token = localStorage.getItem("token");
     if (!token) {
-      alert("トークンが見つかりません。ログインしてください。");
+      toast.error("トークンが見つかりません。ログインしてください。");
       return;
     }
     console.log("update task id: " + taskId);
@@ -118,7 +119,7 @@ export function ShowTask({ setEditingTaskID, setActiveTab }: ShowTaskProps) {
       console.log("success: task updated (id: " + taskId + ")");
     } catch (error) {
       console.error("エラー:", error);
-      alert("通信エラーが発生しました");
+      toast.error("通信エラーが発生しました");
     }
   };
 

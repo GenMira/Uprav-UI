@@ -5,6 +5,7 @@ import {AddTask} from "../components/add-task";
 import { Welcome } from "../welcome/welcome";
 import { ShowTask } from "../components/show-tasks";
 import { EditTask } from "../components/edit-task";
+import { Toaster } from 'react-hot-toast';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -63,7 +64,6 @@ export default function Home() {
 
   return (
     <div className="flex h-screen w-full bg-gray-50">
-      
       <nav className="hidden md:flex md:flex-col md:w-40 lg:w-64 border-r bg-[rgba(58,196,178,1)] p-6 space-y-4 justify-between h-full">
         <div className="space-y-4 w-full">
           <h2 className="font-bold text-xl mb-8">Uprav</h2>
@@ -133,9 +133,10 @@ export default function Home() {
         {activeTab === "addTask" && <AddTask />}
         {/* {activeTab === "welcome" && <Welcome />} */}
         {activeTab === "showTasks" && <ShowTask setEditingTaskID={setEditingTaskID} setActiveTab={setActiveTab}/>}
-        {activeTab === "editTask" && editingTaskID !== null && <EditTask editingTaskID={editingTaskID} />}
+        {activeTab === "editTask" && editingTaskID !== null && <EditTask editingTaskID={editingTaskID} setEditingTaskID={setEditingTaskID} setActiveTab={setActiveTab}/>}
       </main>
       
+      <Toaster position="top-center" reverseOrder={false} />
     </div>
   );
 }

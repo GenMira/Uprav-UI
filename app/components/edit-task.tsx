@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import toast from 'react-hot-toast';
 
 interface Task {
   id:number;
@@ -12,8 +13,12 @@ interface Task {
   group?: string | null;
   assign?: string | null;
 }
+interface ShowTaskProps {
+  setEditingTaskID: (id: number | null) => void;
+  setActiveTab: (tab: string) => void;
+}
 
-export function EditTask({editingTaskID}: {editingTaskID: number}) {
+export function EditTask({editingTaskID, setEditingTaskID, setActiveTab}: {editingTaskID: number, setEditingTaskID: (id: number | null) => void, setActiveTab: (tab: string) => void }) {
   const [taskName, setTaskName] = useState("");
   const [tagName, setTagName] = useState("");
   const [priority, setPriority] = useState<number>(0);
@@ -34,16 +39,16 @@ export function EditTask({editingTaskID}: {editingTaskID: number}) {
 
   const editTask = async () => {
     if(!taskName.trim()) {
-      alert("タスク名を入力してください。");
+      toast.error("タスク名を入力してください。");
       return;
     }
 
     if (priority > 5||priority < 1) {
-      alert("優先度は1から5の数値で指定してください。");
+      toast.error("優先度は1から5の数値で指定してください。");
       return;
     }
     if(!deadline&&!isEverydayTask) {
-      alert("締切日を指定してください。");
+      toast.error("締切日を指定してください。");
       return;
     }
 
@@ -71,7 +76,7 @@ export function EditTask({editingTaskID}: {editingTaskID: number}) {
 
     const token = localStorage.getItem("token");
     if (!token) {
-      alert("トークンが見つかりません。ログインしてください。");
+      toast.error("トークンが見つかりません。ログインしてください。");
       return;
     }
 
@@ -89,8 +94,9 @@ export function EditTask({editingTaskID}: {editingTaskID: number}) {
         throw new Error("編集に失敗しました");
       }
       console.log("success:edit Task");
-      alert("タスクが編集されました！");
-      resertForm();
+      toast.success("タスクが編集されました！");
+      setEditingTaskID(null);
+      setActiveTab("showTasks");
     } catch (error) {
       console.error("Error editing task:", error);
     }
@@ -99,9 +105,10 @@ export function EditTask({editingTaskID}: {editingTaskID: number}) {
   const getTaskDetails = async () => {
     const token = localStorage.getItem("token");
     if (!token) {
-      alert("トークンが見つかりません。ログインしてください。");
+      toast.error("トークンが見つかりません。ログインしてください。");
       return;
     }
+    console.log("edit task id: " + editingTaskID);
     try {
       const response = await fetch(`https://uprav.trap.show/api/tasks/${editingTaskID}`, {
         method: "GET",
@@ -111,15 +118,39 @@ export function EditTask({editingTaskID}: {editingTaskID: number}) {
         },
       });
       if (!response.ok) {
+        const errorData = await response.json().catch(() => ({})); 
+    
+        // 2. JSON内のmessageプロパティ、またはHTTPのステータステキストを表示する
+        const errorMessage = errorData.message || response.statusText;
+        
+        console.log("response error: " + errorMessage);
         throw new Error("Failed to fetch tasks");
       }
       const task = await response.json();
       console.log("success:", task);
+
+          setTaskName(task.name || "");
+          setTagName(task.tag || "");
+          setPriority(task.priority || 0);
+          
+          // deadline から "T00:00:00" 部分を削って "YYYY-MM-DD" だけにして input[type="date"] に食わせる
+          if (task.deadline) {
+            setDeadline(task.deadline.split("T")[0]);
+          }
+          
+          setIsEverydayTask(task.is_everyday || false);
+          setDescription(task.description || "");
+          
     } catch (error) {
       console.error("エラー:", error);
-      alert("通信エラーが発生しました");
+      toast.error("通信エラーが発生しました");
     }
   };
+
+  useEffect(() => {
+    getTaskDetails();
+  }, []);
+
 
   return (
     <div className="flex flex-col items-center bg-gray-100 rounded-2xl">
@@ -204,7 +235,7 @@ export function EditTask({editingTaskID}: {editingTaskID: number}) {
           className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
           onClick={() => editTask()}
         >
-          編集
+          更新
         </button>
       </div>
       

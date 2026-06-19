@@ -1,4 +1,5 @@
 import { useState } from "react";
+import toast from 'react-hot-toast';
 // interface AddTaskProps {
 //   onAddTask: (task: string) => void;
 // }
@@ -37,16 +38,16 @@ export function AddTask() {
 
   const addTask = async () => {
     if(!taskName.trim()) {
-      alert("タスク名を入力してください。");
+      toast.error("タスク名を入力してください。");
       return;
     }
 
     if (priority > 5||priority < 1) {
-      alert("優先度は1から5の数値で指定してください。");
+      toast.error("優先度は1から5の数値で指定してください。");
       return;
     }
     if(!deadline&&!isEverydayTask) {
-      alert("締切日を指定してください。");
+      toast.error("締切日を指定してください。");
       return;
     }
 
@@ -73,7 +74,7 @@ export function AddTask() {
 
     const token = localStorage.getItem("token");
     if (!token) {
-      alert("トークンが見つかりません。ログインしてください。");
+      toast.error("トークンが見つかりません。ログインしてください。");
       return;
     }
 
@@ -91,7 +92,7 @@ export function AddTask() {
         throw new Error("追加に失敗しました");
       }
       console.log("success:add Task");
-      alert("タスクが追加されました！");
+      toast.success("タスクが追加されました！");
       resertForm();
     } catch (error) {
       console.error("Error adding task:", error);
