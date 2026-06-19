@@ -12,6 +12,12 @@ interface Task {
   group?: string | null;
   assign?: string | null;
 }
+
+interface ShowTaskProps {
+  setEditingTaskID: (id: number | null) => void;
+  setActiveTab: (tab: string) => void;
+}
+
 const priorityColors = [
   // "#77C6FF", // 1
   // "#DBEAFE", // 2
@@ -30,8 +36,10 @@ const priorityColors = [
   "#FF6751", //expired
 ];
 
+
+
 //export function ShowTask({tasks}:{tasks:string[]}) {
-export function ShowTask() {
+export function ShowTask({ setEditingTaskID, setActiveTab }: ShowTaskProps) {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
@@ -255,9 +263,9 @@ export function ShowTask() {
                 </div>
               )}
 
-              <div className="flex justify-center items-center pt-5 pt-10w-full">
+              <div className="flex justify-center items-center pt-5 pt-10 gap-4 w-full">
                 <button
-                  className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+                  className="bg-blue-500 text-white px-4 py-2 pr-2 pl-2 rounded-lg hover:bg-blue-600"
                   onClick={() => {
                     if (selectedTask.is_everyday) {
                       doneEverydaytask(selectedTask);
@@ -268,6 +276,15 @@ export function ShowTask() {
                   }}
                 >
                   完了
+                </button>
+                <button
+                  className="bg-blue-500 text-white px-4 py-2 pr-2 pl-2 rounded-lg hover:bg-blue-600"
+                  onClick={() => {
+                    setEditingTaskID(selectedTask.id);
+                    setActiveTab("editTask");
+                  }}
+                >
+                  編集
                 </button>
               </div>
             </div>

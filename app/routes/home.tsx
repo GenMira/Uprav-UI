@@ -4,6 +4,7 @@ import { useNavigate } from "react-router";
 import {AddTask} from "../components/add-task";
 import { Welcome } from "../welcome/welcome";
 import { ShowTask } from "../components/show-tasks";
+import { EditTask } from "../components/edit-task";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -16,10 +17,10 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState("showTasks");
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [showAccountMenu, setShowAccountMenu] = useState<boolean>(false);
+  const [isShowAccountMenu, setIsShowAccountMenu] = useState<boolean>(false);
   const [userName, setUserName] = useState<string | null>(null);
   const [userID, setUserID] = useState<string | null>(null);
-  // const [tasks,setTasks] = useState<string[]>([]);
+  const [editingTaskID, setEditingTaskID] = useState<number | null>(null);
 
   // const handleAddTask = (newTask: string) => {
   //   setTasks([...tasks, newTask]); 
@@ -87,10 +88,20 @@ export default function Home() {
           >
             タスク追加
           </button>
+          {editingTaskID !== null && (
+            <button 
+              onClick={() => setActiveTab("editTask")}
+              className={`block w-full text-left p-2 rounded transition-colors ${
+                activeTab === 'editTask' ? 'bg-blue-100 text-blue-600' : 'hover:bg-[rgba(50,177,161,1)]'
+              }`}
+            >
+              タスク編集
+            </button>
+          )}
         </div>
         <div className="pt-4 border-t border-[rgba(50,177,161,1)] w-full">
           <div className="relative w-full">
-            {showAccountMenu && (
+            {isShowAccountMenu && (
               <div 
                 className="absolute bottom-full left-0 mb-2 w-full bg-white text-gray-800 border border-gray-200 rounded-xl p-3 shadow-xl animate-fade-in z-50"
                 >
@@ -108,8 +119,8 @@ export default function Home() {
               </div>
             )}
             <button
-              onClick={() => setShowAccountMenu(!showAccountMenu)} // クリックで反転開閉
-              className={`text-left w-full p-2 font-semibold rounded transition-colors cursor-pointer ${showAccountMenu ? 'bg-blue-100 text-blue-600' : 'hover:bg-[rgba(50,177,161,1)]'}`}
+              onClick={() => setIsShowAccountMenu(!isShowAccountMenu)} // クリックで反転開閉
+              className={`text-left w-full p-2 font-semibold rounded transition-colors cursor-pointer ${isShowAccountMenu ? 'bg-blue-100 text-blue-600' : 'hover:bg-[rgba(50,177,161,1)]'}`}
             >
                アカウント
             </button>
@@ -121,7 +132,8 @@ export default function Home() {
         {/* {activeTab === "addTask" && <AddTask onAddTask={handleAddTask}/>} */}
         {activeTab === "addTask" && <AddTask />}
         {/* {activeTab === "welcome" && <Welcome />} */}
-        {activeTab === "showTasks" && <ShowTask />}
+        {activeTab === "showTasks" && <ShowTask setEditingTaskID={setEditingTaskID} setActiveTab={setActiveTab}/>}
+        {activeTab === "editTask" && editingTaskID !== null && <EditTask editingTaskID={editingTaskID} />}
       </main>
       
     </div>
