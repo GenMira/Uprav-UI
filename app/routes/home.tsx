@@ -5,7 +5,7 @@ import {AddTask} from "../components/add-task";
 import { Welcome } from "../welcome/welcome";
 import { ShowTask } from "../components/show-tasks";
 import { EditTask } from "../components/edit-task";
-import { Toaster } from 'react-hot-toast';
+import { Toaster,toast } from 'react-hot-toast';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -28,32 +28,78 @@ export default function Home() {
   // };
 
   useEffect(() => {
+    const checkAuth = async () => {
     const token = localStorage.getItem("token");
     
-
     if (!token) {
-      // トークンがなければログインへ強制送還（履歴を上書き）
+      // トークンがなければログイン画面へ強制リダイレクト（履歴を上書き）
       navigate("/login", { replace: true });
-    } else {
-      // トークンがあればアクセスを許可
+      return;
+    }
+
+    try {
+      // ページを開くたびにバックエンドの /api/me に検証リクエストを送る
+      const res = await fetch("https://uprav.trap.show/api/me", {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
+
+      if (res.status === 401) {
+        // 期限切れ、または無効なトークンだった場合
+        localStorage.removeItem("token");
+        localStorage.removeItem("userSession");
+        setIsAuthenticated(false);
+        setUserName(null);
+        setUserID(null);
+        
+        toast.error("ログインセッションが切れました。再ログインしてください。");
+        navigate("/login", { replace: true });
+        return;
+      }
+
+      if (!res.ok) {
+        throw new Error("サーバーエラーが発生しました");
+      }
+
+      // トークンが有効な場合、最新のユーザー情報を取得
+      const data = await res.json(); 
+
       setIsAuthenticated(true);
+      setUserName(data.name || null);
+      setUserID(data.uid || null);
+
+      // 必要に応じてローカルストレージ側のセッション情報も最新に同期
+      localStorage.setItem("userSession", JSON.stringify({ username: data.name, uid: data.uid }));
+
+    } catch (error) {
+      console.error("認証チェック中にエラーが発生しました:", error);
+      
+      // オフライン状態や一時的なネットワークエラーへの配慮
+      // 完全にログアウトさせず、既存のローカルキャッシュで一時的にフォールバックさせる
       const userSession = localStorage.getItem("userSession");
       if (userSession) {
         try {
           const parsedSession = JSON.parse(userSession);
+          setIsAuthenticated(true);
           setUserName(parsedSession.username || null);
           setUserID(parsedSession.uid || null);
-        } catch (error) {
-          console.error("ユーザーセッションの解析に失敗:", error);
-          setUserName(null);
-          setUserID(null);
+        } catch (e) {
+          navigate("/login", { replace: true });
         }
+      } else {
+        navigate("/login", { replace: true });
       }
     }
-  }, [navigate]);
+  };
+
+  checkAuth();
+}, [navigate, setIsAuthenticated, setUserName, setUserID]); // 依存配列に必要なSet関数を追加
 
   const handleLogout = () => {
-    localStorage.removeItem("token"); // localStorageからtokenを削除
+    localStorage.removeItem("token");
+    localStorage.removeItem("userSession");
     navigate("/login", { replace: true }); // ログイン画面へリダイレクト
   };
 
