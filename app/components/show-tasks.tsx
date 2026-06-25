@@ -142,12 +142,12 @@ export function ShowTask({ setEditingTaskID, setActiveTab }: ShowTaskProps) {
     <div className="flex flex-col h-screen w-full bg-gray-100">
       <div className="flex h-20 justify-center items-center bg-blue-300">
         <h2 className="text-xl font-bold mb-6 mt-6 mr-4">タスク一覧</h2>
-        <button
+        {/* <button
           onClick={showTasks}
           className="ml-4 h-10 px-4 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
         >
           更新
-        </button>
+        </button> */}
       </div>
 
       <div className="flex flex-col p-6">

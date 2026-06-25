@@ -37,6 +37,12 @@ export function EditTask({editingTaskID, setEditingTaskID, setActiveTab}: {editi
     setDescription("");
   }
 
+  const cansel = () =>{
+    resertForm();
+    setEditingTaskID(null);
+    setActiveTab("showTasks");
+  }
+
   const editTask = async () => {
     if(!taskName.trim()) {
       toast.error("タスク名を入力してください。");
@@ -155,7 +161,15 @@ export function EditTask({editingTaskID, setEditingTaskID, setActiveTab}: {editi
   return (
     <div className="flex flex-col items-center bg-gray-100 rounded-2xl">
       <div className="h-1/3 w-full flex items-end justify-center">
-        <h2 className="text-xl pt-10 font-bold">Edit Task</h2>
+        <h2 className="text-xl pt-10 font-bold">タスク編集</h2>
+      </div>
+      <div className="flex items-right justify-end w-[80%] px-6 pt-4">
+        <button
+          className="bg-gray-100 text-black px-4 py-2 rounded-lg hover:bg-gray-300"
+          onClick={() => cansel()}
+        >
+          キャンセル
+        </button>
       </div>
 
       <div className="flex flex-row w-full w-full justify-center items-center px-6 gap-2 pt-20 pb-10">

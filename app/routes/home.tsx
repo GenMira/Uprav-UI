@@ -134,6 +134,7 @@ export default function Home() {
           >
             タスク追加
           </button>
+
           {editingTaskID !== null && (
             <button 
               onClick={() => setActiveTab("editTask")}
@@ -144,6 +145,13 @@ export default function Home() {
               タスク編集
             </button>
           )}
+
+          <button 
+            //onClick={() => setActiveTab("group")}
+            className={`block w-full text-left p-2 rounded transition-colors ${activeTab === 'group' ? 'bg-blue-100 text-blue-600' : 'hover:bg-[rgba(50,177,161,1)]'}`}
+          >
+            グループ
+          </button>
         </div>
         <div className="pt-4 border-t border-[rgba(50,177,161,1)] w-full">
           <div className="relative w-full">

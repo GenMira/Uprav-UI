@@ -103,7 +103,7 @@ export function AddTask() {
     <div className="flex flex-col items-center bg-gray-100 rounded-2xl">
       {/* overflow-y-auto */}
       <div className="h-1/3 w-full flex items-end justify-center">
-        <h2 className="text-xl pt-10 font-bold">Add Task</h2>
+        <h2 className="text-xl pt-10 font-bold">タスク追加</h2>
       </div>
 
       <div className="flex flex-row w-full w-full justify-center items-center px-6 gap-2 pt-20 pb-10">
