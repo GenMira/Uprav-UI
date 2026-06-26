@@ -295,7 +295,6 @@ export function ShowTask({ setEditingTaskID, setActiveTab }: ShowTaskProps) {
               </button>
             </div>
 
-            {/* 3行目：タグ */}
             <div className="flex flex-row w-full items-center gap-4 py-1.5">
               <div className="w-[18%] text-sm font-medium text-gray-600 shrink-0">タグ</div>
               <div className="flex-1 flex flex-row items-center gap-4">
@@ -305,6 +304,7 @@ export function ShowTask({ setEditingTaskID, setActiveTab }: ShowTaskProps) {
                   className="text-sm p-1.5 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
                 >
                   <option value="all">すべてのタグ</option>
+                  <option value="none">タグなし</option>
                   {Array.from(
                     new Set(
                       tasks
@@ -378,12 +378,17 @@ export function ShowTask({ setEditingTaskID, setActiveTab }: ShowTaskProps) {
                   }
                 }
                 if(filterTag!=="all"){
-                  if(filterTag!==task.tag){
+                  if(task.tag){
+                    if(filterTag!==task.tag){
+                      return false
+                    }
+                  }
+                  else if(filterTag!=="none"){
                     return false
                   }
                 }
               }
-              
+
               return true
             })
             .map((task, index) => {
