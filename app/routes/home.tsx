@@ -204,3 +204,4 @@ export default function Home() {
 /*max-w-[300px]	最大幅を300pxに制限*/
 /*px-4	左右のパディング	内側の左右に 1rem (16px) の余白を作ります。 */
 /*shadow-sm　影をつける */
+// shrink-0 画面幅が狭まっても文字が折り返して潰れないように

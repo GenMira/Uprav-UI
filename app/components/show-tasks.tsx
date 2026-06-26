@@ -45,12 +45,12 @@ export function ShowTask({ setEditingTaskID, setActiveTab }: ShowTaskProps) {
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
   const [isFilterON, setIsFilterON] = useState<boolean>(false);
-  const [filterPriority, setFilterPriority] = useState<number>(1);
+  const [filterPriority, setFilterPriority] = useState<number>(0);
   const [isPriorityAbove, setIsPriorityAbove] = useState<boolean>(true);
   const [filterDate, setFilterDate] = useState("");
   const [isDateAbove,setIsDateAbove] = useState<boolean>(true);
   const today = new Date().toLocaleDateString("sv-SE");
-  const [filterTag,setFilterTag] = useState("");
+  const [filterTag,setFilterTag] = useState("all");
 
 
 
@@ -145,6 +145,23 @@ export function ShowTask({ setEditingTaskID, setActiveTab }: ShowTaskProps) {
   };
 
   const searchTask = () =>{
+    tasks.filter((task)=>{
+      if(filterPriority!==0){
+        if (isPriorityAbove) {
+          if(task.priority>=filterPriority){
+            return true
+          }
+          return false
+        }
+        else{
+          if(task.priority<=filterPriority){
+            return true
+          }
+          return false
+        }
+      }
+      return true
+    })
 
   }
 
@@ -177,177 +194,122 @@ export function ShowTask({ setEditingTaskID, setActiveTab }: ShowTaskProps) {
         </div>
       </div>
       {isFilterON && (
-        <div className="flex flex-col justify-center items-center bg-blue-100 p-4">
-          <span className="text-sm text-blue-800 font-semibold">
+        <div className="flex flex-col justify-center items-center bg-blue-100 p-4 w-full rounded-xl shadow-sm">
+          <span className="text-sm text-blue-800 font-semibold mb-2">
             検索条件
           </span>
 
-          {/* <div className="flex flex-col w-full justify-center items-center px-6 py-3"> 
-            <div className="flex flex-row w-full justify-center items-center gap-3">
-              <div className="w-[15%] text-sm font-medium text-gray-600">優先度</div>
-              <select
-                value={filterPriority}
-                onChange={(e) => setFilterPriority(Number(e.target.value))}
-                className="text-sm p-1.5 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
-              >
-                <option value={1}>1</option>
-                <option value={2}>2</option>
-                <option value={3}>3</option>
-                <option value={4}>4</option>
-                <option value={5}>5</option>
-              </select>
-              <div>以上</div>
-              <div>以下</div>
-
-              
-              {/* <div className="w-[65%] flex flex-col gap-2">
-                
-                <input
-                  type="range"
-                  min="1"
-                  max="5"
-                  step="1"
-                  value={filterPriority === 0 ? 1 : filterPriority}
+          <div className="flex flex-col w-full max-w-xl justify-center items-center gap-2 px-6 py-2"> 
+            
+            <div className="flex flex-row w-full items-center gap-4 py-1.5 border-b border-blue-200/40">
+              <div className="w-[18%] text-sm font-medium text-gray-600 shrink-0">優先度</div>
+              <div className="flex-1 flex flex-row items-center gap-4">
+                <select
+                  value={filterPriority}
                   onChange={(e) => setFilterPriority(Number(e.target.value))}
-                  className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-500"
-                />
-                
-                <div className="relative h-4 text-[10px] text-gray-400 font-medium select-none">
-                  {[1, 2, 3, 4, 5].map((num) => {
-                    const leftPosition = `${(num - 1) * 25}%`;
-                    const isActive = (filterPriority === 0 ? 1 : filterPriority) === num;
+                  className="text-sm p-1.5 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                >
+                  <option value={0}>-</option>
+                  <option value={1}>1</option>
+                  <option value={2}>2</option>
+                  <option value={3}>3</option>
+                  <option value={4}>4</option>
+                  <option value={5}>5</option>
+                </select>
 
-                    return (
-                      <span
-                        key={num}
-                        style={{ left: leftPosition }}
-                        className={`absolute top-0 -translate-x-1/2 transition-all ${
-                          isActive ? "text-blue-600 font-bold scale-105" : ""
-                        }`}
-                      >
-                        {num}
-                      </span>
-                    );
-                  })}
+                <div className="flex items-center gap-3 text-sm font-medium text-gray-600">
+                  <label className="flex items-center gap-1 cursor-pointer select-none">
+                    <input
+                      type="radio"
+                      name="priorityCondition"
+                      value="gte"
+                      checked={isPriorityAbove}
+                      onChange={() => setIsPriorityAbove(true)}
+                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 accent-blue-500 cursor-pointer"
+                    />
+                    <span className={isPriorityAbove ? "text-blue-600 font-bold" : ""}>以上</span>
+                  </label>
+
+                  <label className="flex items-center gap-1 cursor-pointer select-none">
+                    <input
+                      type="radio"
+                      name="priorityCondition"
+                      value="lte"
+                      checked={!isPriorityAbove}
+                      onChange={() => setIsPriorityAbove(false)}
+                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 accent-blue-500 cursor-pointer"
+                    />
+                    <span className={!isPriorityAbove ? "text-blue-600 font-bold" : ""}>以下</span>
+                  </label>
                 </div>
-
-              </div> 
-            </div>
-          </div> */}
-
-          <div className="flex flex-col w-full justify-center items-center px-6 py-3"> 
-            <div className="flex flex-row w-full justify-center items-center gap-3 p-2">
-              <div className="w-[15%] text-sm font-medium text-gray-600">優先度</div>
-              
-              {/* セレクトボックス */}
-              <select
-                value={filterPriority}
-                onChange={(e) => setFilterPriority(Number(e.target.value))}
-                className="text-sm p-1.5 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
-              >
-                <option value={1}>1</option>
-                <option value={2}>2</option>
-                <option value={3}>3</option>
-                <option value={4}>4</option>
-                <option value={5}>5</option>
-              </select>
-
-              {/* 以上 / 以下 の選択（ラジオボタン） */}
-              <div className="flex items-center gap-3 text-sm font-medium text-gray-600">
-                {/* 「以上」の選択肢 */}
-                <label className="flex items-center gap-1 cursor-pointer select-none">
-                  <input
-                    type="radio"
-                    name="priorityCondition" // 同じnameにすることで片方しか選べなくなります
-                    value="gte" // Greater Than or Equal (以上)
-                    checked={isPriorityAbove} // Stateで管理する場合の例
-                    onChange={() => {
-                      setIsPriorityAbove(true);
-                    }}
-                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 accent-blue-500 cursor-pointer"
-                  />
-                  <span className={"text-blue-600 font-bold"}>以上</span>
-                </label>
-
-                {/* 「以下」の選択肢 */}
-                <label className="flex items-center gap-1 cursor-pointer select-none">
-                  <input
-                    type="radio"
-                    name="priorityCondition"
-                    value="lte" // Less Than or Equal (以下)
-                    checked={!isPriorityAbove}
-                    onChange={() => {
-                      setIsPriorityAbove(false);
-                    }}
-                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 accent-blue-500 cursor-pointer"
-                  />
-                  <span className={"text-blue-600 font-bold"}>以下</span>
-                </label>
               </div>
-              <div>リセット</div>
-
+              <button 
+                onClick={() => { setFilterPriority(0); setIsPriorityAbove(true); }}
+                className="text-xs text-gray-400 hover:text-red-500 transition-colors shrink-0"
+              >
+                リセット
+              </button>
             </div>
-            <div className="flex flex-row w-full justify-center items-center gap-3 p-2">
-              <div className="w-[15%] text-sm font-medium text-gray-600">締切日</div>
-              
-              <div className="flex flex-col gap-2">
+
+            <div className="flex flex-row w-full items-center gap-4 py-1.5 border-b border-blue-200/40">
+              <div className="w-[18%] text-sm font-medium text-gray-600 shrink-0">締切日</div>
+              <div className="flex-1 flex flex-row items-center gap-4">
                 <input
                   type="date"
                   min={today}
                   value={filterDate}
                   onChange={(e) => setFilterDate(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="text-sm p-1.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
                 />
                 <div className="flex items-center gap-3 text-sm font-medium text-gray-600">
                   <label className="flex items-center gap-1 cursor-pointer select-none">
                     <input
                       type="radio"
-                      name="DateCondition" // 同じnameにすることで片方しか選べなくなります
-                      value="gte" // Greater Than or Equal (以上)
-                      checked={isDateAbove} // Stateで管理する場合の例
-                      onChange={() => {
-                        setIsDateAbove(true);
-                      }}
+                      name="DateCondition"
+                      value="gte"
+                      checked={isDateAbove}
+                      onChange={() => setIsDateAbove(true)}
                       className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 accent-blue-500 cursor-pointer"
                     />
-                    <span className={"text-blue-600 font-bold"}>以降</span>
+                    <span className={isDateAbove ? "text-blue-600 font-bold" : ""}>以降</span>
                   </label>
 
                   <label className="flex items-center gap-1 cursor-pointer select-none">
                     <input
                       type="radio"
                       name="DateCondition"
-                      value="lte" // Less Than or Equal (以下)
+                      value="lte"
                       checked={!isDateAbove}
-                      onChange={() => {
-                        setIsDateAbove(false);
-                      }}
+                      onChange={() => setIsDateAbove(false)}
                       className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 accent-blue-500 cursor-pointer"
                     />
-                    <span className={"text-blue-600 font-bold"}>以前</span>
+                    <span className={!isDateAbove ? "text-blue-600 font-bold" : ""}>以前</span>
                   </label>
                 </div>
               </div>
-              <div>
-                リセット  
-              </div>
+              <button 
+                onClick={() => { setFilterDate(""); setIsDateAbove(true); }}
+                className="text-xs text-gray-400 hover:text-red-500 transition-colors shrink-0"
+              >
+                リセット
+              </button>
             </div>
-            <div className="flex flex-row w-full justify-center items-center gap-3 p-2">
-              <div className="w-[15%] text-sm font-medium text-gray-600">タグ</div>
-              
-              <div className="flex flex-col gap-2">
+
+            {/* 3行目：タグ */}
+            <div className="flex flex-row w-full items-center gap-4 py-1.5">
+              <div className="w-[18%] text-sm font-medium text-gray-600 shrink-0">タグ</div>
+              <div className="flex-1 flex flex-row items-center gap-4">
                 <select
                   value={filterTag}
                   onChange={(e) => setFilterTag(e.target.value)}
                   className="text-sm p-1.5 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
                 >
                   <option value="all">すべてのタグ</option>
-
                   {Array.from(
                     new Set(
                       tasks
-                        .map((task) => task.tag)       // 1. 各タスクから tag を取り出す
-                        .filter((tag) => tag && tag.trim() !== "") // 2. null, undefined, 空文字を除外
+                        .map((task) => task.tag)
+                        .filter((tag) => tag && tag.trim() !== "")
                     )
                   ).map((tag) => (
                     <option key={tag} value={tag}>
@@ -356,16 +318,23 @@ export function ShowTask({ setEditingTaskID, setActiveTab }: ShowTaskProps) {
                   ))}
                 </select>
               </div>
-              <div>
-                リセット  
-              </div>
+              <button 
+                onClick={() => setFilterTag("all")}
+                className="text-xs text-gray-400 hover:text-red-500 transition-colors shrink-0"
+              >
+                リセット
+              </button>
             </div>
-            <button
-              className="bg-blue-500 text-white px-4 py-2 pr-2 pl-2 rounded-lg hover:bg-blue-600"
-              onClick={() => searchTask()}
-            >
-              検索
-            </button>
+
+            {/* 検索ボタンエリア
+            <div className="w-full flex justify-center pt-3">
+              <button
+                className="bg-blue-500 text-white px-6 py-1.5 rounded-lg font-medium shadow-sm hover:bg-blue-600 transition-colors"
+                onClick={() => searchTask()}
+              >
+                検索する
+              </button>
+            </div> */}
 
           </div>
         </div>
@@ -379,9 +348,43 @@ export function ShowTask({ setEditingTaskID, setActiveTab }: ShowTaskProps) {
                 const today = new Date().toLocaleDateString("sv-SE");
                 const isDoneToday = task.deadline.startsWith(today);
                 
-                return !isDoneToday;
+                if (isDoneToday) return false;
               }
-              return true;
+
+              if(isFilterON){
+                if(filterPriority!==0){
+                  if (isPriorityAbove) {
+                    if(task.priority<filterPriority){
+                      return false
+                    }
+                  }
+                  else{
+                    if(task.priority>filterPriority){
+                      return false
+                    }
+                  }
+                }
+                if(filterDate!==""){
+                  const taskDateStr = task.deadline.substring(0, 10);
+                  if(isDateAbove){
+                    if(filterDate>taskDateStr){
+                      return false
+                    }
+                  }
+                  else{
+                    if(filterDate<taskDateStr){
+                      return false
+                    }
+                  }
+                }
+                if(filterTag!=="all"){
+                  if(filterTag!==task.tag){
+                    return false
+                  }
+                }
+              }
+              
+              return true
             })
             .map((task, index) => {
               let bgClass = "#F3F4F6";
