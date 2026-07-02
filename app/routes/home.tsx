@@ -19,6 +19,7 @@ export default function Home() {
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [isShowAccountMenu, setIsShowAccountMenu] = useState<boolean>(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [userName, setUserName] = useState<string | null>(null);
   const [userID, setUserID] = useState<string | null>(null);
   const [editingTaskID, setEditingTaskID] = useState<number | null>(null);
@@ -103,19 +104,41 @@ export default function Home() {
     navigate("/login", { replace: true }); // ログイン画面へリダイレクト
   };
 
-  // 3. 認証が完了するまでは、一瞬のチラつきを防ぐために何も画面に出さない
+  // 認証が完了するまでは、一瞬のチラつきを防ぐために何も画面に出さない
   if (!isAuthenticated) {
     return null; 
   }
 
   return (
     <div className="flex h-screen w-full bg-gray-50">
-      <nav className="hidden md:flex md:flex-col md:w-40 lg:w-64 border-r bg-[rgba(58,196,178,1)] p-6 space-y-4 justify-between h-full">
+      <nav className={`
+        /* スマホ：基本は画面外(-translate-x-full)に隠し、Open時は定位置(translate-x-0)へスライド */
+        fixed md:static inset-y-0 left-0 z-50 w-64 p-6 space-y-4 justify-between h-full flex flex-col border-r bg-[rgba(58,196,178,1)]
+        transition-transform duration-300 ease-in-out
+        ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
+        
+        /* PC：画面が広がったら強制的に常時表示 */
+        md:translate-x-0 md:w-40 lg:w-64
+      `}>
         <div className="space-y-4 w-full">
-          <h2 className="font-bold text-xl mb-8">Uprav</h2>
+          <div className="flex justify-between items-center mb-8">
+            <h2 className="font-bold text-xl">Uprav</h2>
+            <button 
+              onClick={() => {
+                setIsSidebarOpen(false)
+                setIsShowAccountMenu(false)
+              }}
+              className="md:hidden text-gray-800 text-xl font-medium p-1"
+            >
+              ✕
+            </button>
+          </div>
           
           <button 
-            onClick={() => setActiveTab("showTasks")}
+            onClick={() => {
+              setActiveTab("showTasks")
+              setIsSidebarOpen(false)
+            }}
             className={`block w-full text-left p-2 rounded transition-colors ${activeTab === 'showTasks' ? 'bg-blue-100 text-blue-600' : 'hover:bg-[rgba(50,177,161,1)]'}`}
           >
             タスク一覧
@@ -129,7 +152,10 @@ export default function Home() {
           </button> */}
 
           <button 
-            onClick={() => setActiveTab("addTask")}
+            onClick={() => {
+              setActiveTab("addTask")
+              setIsSidebarOpen(false)
+            }}
             className={`block w-full text-left p-2 rounded transition-colors ${activeTab === 'addTask' ? 'bg-blue-100 text-blue-600' : 'hover:bg-[rgba(50,177,161,1)]'}`}
           >
             タスク追加
@@ -137,7 +163,10 @@ export default function Home() {
 
           {editingTaskID !== null && (
             <button 
-              onClick={() => setActiveTab("editTask")}
+              onClick={() => {
+                setActiveTab("editTask")
+                setIsSidebarOpen(false)
+              }}
               className={`block w-full text-left p-2 rounded transition-colors ${
                 activeTab === 'editTask' ? 'bg-blue-100 text-blue-600' : 'hover:bg-[rgba(50,177,161,1)]'
               }`}
@@ -182,7 +211,25 @@ export default function Home() {
         </div>
       </nav>
 
-      <main className="flex-1 p-10 overflow-y-auto">
+      {/* スマホ用：サイドバーを開くためのボタン（画面左上に固定配置） */}
+      <button
+        onClick={() => setIsSidebarOpen(true)}
+        className="md:hidden fixed top-4 left-4 z-40 p-2 bg-[rgba(58,196,178,1)] text-white rounded-lg shadow-md hover:bg-[rgba(50,177,161,1)]"
+      >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+
+      {/* スマホ用：サイドバーが開いている時に背景を暗くするレイヤー */}
+      {isSidebarOpen && (
+        <div 
+          onClick={() => setIsSidebarOpen(false)}
+          className="md:hidden fixed inset-0 bg-black/40 z-45"
+        />
+      )}
+
+      <main className="flex-1 p-6 md:p-10 pt-16 md:pt-10 overflow-y-auto">
         {/* {activeTab === "addTask" && <AddTask onAddTask={handleAddTask}/>} */}
         {activeTab === "addTask" && <AddTask />}
         {/* {activeTab === "welcome" && <Welcome />} */}

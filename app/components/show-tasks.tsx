@@ -144,26 +144,6 @@ export function ShowTask({ setEditingTaskID, setActiveTab }: ShowTaskProps) {
     setTasks(tasks.filter((tasks) => tasks.id !== task.id ));
   };
 
-  const searchTask = () =>{
-    tasks.filter((task)=>{
-      if(filterPriority!==0){
-        if (isPriorityAbove) {
-          if(task.priority>=filterPriority){
-            return true
-          }
-          return false
-        }
-        else{
-          if(task.priority<=filterPriority){
-            return true
-          }
-          return false
-        }
-      }
-      return true
-    })
-
-  }
 
   useEffect(() => {
     showTasks();
@@ -171,7 +151,7 @@ export function ShowTask({ setEditingTaskID, setActiveTab }: ShowTaskProps) {
 
   return (
     <div className="flex flex-col h-screen w-full bg-gray-100">
-      <div className="flex h-20 justify-center items-center bg-blue-300 gap-4">
+      <div className="flex h-20 justify-center items-center bg-blue-300 gap-4 p-4">
         <h2 className="text-xl font-bold">タスク一覧</h2>
         
         <div className="flex items-center gap-2">
@@ -200,10 +180,9 @@ export function ShowTask({ setEditingTaskID, setActiveTab }: ShowTaskProps) {
           </span>
 
           <div className="flex flex-col w-full max-w-xl justify-center items-center gap-2 px-6 py-2"> 
-            
-            <div className="flex flex-row w-full items-center gap-4 py-1.5 border-b border-blue-200/40">
+            <div className="flex flex-col md:flex-row w-full items-center gap-4 py-1.5 border-b border-blue-200/40">
               <div className="w-[18%] text-sm font-medium text-gray-600 shrink-0">優先度</div>
-              <div className="flex-1 flex flex-row items-center gap-4">
+              <div className="flex-1 flex flex-col md:flex-row items-center gap-4">
                 <select
                   value={filterPriority}
                   onChange={(e) => setFilterPriority(Number(e.target.value))}
@@ -241,19 +220,20 @@ export function ShowTask({ setEditingTaskID, setActiveTab }: ShowTaskProps) {
                     />
                     <span className={!isPriorityAbove ? "text-blue-600 font-bold" : ""}>以下</span>
                   </label>
+
+                  <button 
+                    onClick={() => { setFilterPriority(0); setIsPriorityAbove(true); }}
+                    className="text-xs text-gray-400 hover:text-red-500 transition-colors shrink-0"
+                  >
+                    リセット
+                  </button>
                 </div>
               </div>
-              <button 
-                onClick={() => { setFilterPriority(0); setIsPriorityAbove(true); }}
-                className="text-xs text-gray-400 hover:text-red-500 transition-colors shrink-0"
-              >
-                リセット
-              </button>
             </div>
 
-            <div className="flex flex-row w-full items-center gap-4 py-1.5 border-b border-blue-200/40">
+            <div className="flex flex-col md:flex-row w-full items-center gap-4 py-1.5 border-b border-blue-200/40">
               <div className="w-[18%] text-sm font-medium text-gray-600 shrink-0">締切日</div>
-              <div className="flex-1 flex flex-row items-center gap-4">
+              <div className="flex-1 flex flex-col md:flex-row items-center gap-4">
                 <input
                   type="date"
                   min={today}
@@ -285,17 +265,17 @@ export function ShowTask({ setEditingTaskID, setActiveTab }: ShowTaskProps) {
                     />
                     <span className={!isDateAbove ? "text-blue-600 font-bold" : ""}>以前</span>
                   </label>
+                  <button 
+                    onClick={() => { setFilterDate(""); setIsDateAbove(true); }}
+                    className="text-xs text-gray-400 hover:text-red-500 transition-colors shrink-0"
+                  >
+                    リセット
+                  </button>
                 </div>
               </div>
-              <button 
-                onClick={() => { setFilterDate(""); setIsDateAbove(true); }}
-                className="text-xs text-gray-400 hover:text-red-500 transition-colors shrink-0"
-              >
-                リセット
-              </button>
             </div>
 
-            <div className="flex flex-row w-full items-center gap-4 py-1.5">
+            <div className="flex flex-col md:flex-row w-full items-center gap-4 py-1.5">
               <div className="w-[18%] text-sm font-medium text-gray-600 shrink-0">タグ</div>
               <div className="flex-1 flex flex-row items-center gap-4">
                 <select
@@ -317,13 +297,13 @@ export function ShowTask({ setEditingTaskID, setActiveTab }: ShowTaskProps) {
                     </option>
                   ))}
                 </select>
+                <button 
+                  onClick={() => setFilterTag("all")}
+                  className="text-xs text-gray-400 hover:text-red-500 transition-colors shrink-0"
+                >
+                  リセット
+                </button>
               </div>
-              <button 
-                onClick={() => setFilterTag("all")}
-                className="text-xs text-gray-400 hover:text-red-500 transition-colors shrink-0"
-              >
-                リセット
-              </button>
             </div>
 
             {/* 検索ボタンエリア

@@ -106,8 +106,8 @@ export function AddTask() {
         <h2 className="text-xl pt-10 font-bold">タスク追加</h2>
       </div>
 
-      <div className="flex flex-row w-full w-full justify-center items-center px-6 gap-2 pt-20 pb-10">
-        <div className="w-[20%]">タスク名</div>
+      <div className="flex flex-col md:flex-row w-full w-full justify-center items-center px-6 gap-2 pt-20 pb-10">
+        <div className="md:w-[20%]">タスク名</div>
         <input
           type="text"
           placeholder="新規タスク..."
@@ -116,8 +116,8 @@ export function AddTask() {
           className="w-[60%] p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
-      <div className="flex flex-row w-full w-full justify-center items-center px-6 gap-2 pt-10 pb-10">
-        <div className="w-[20%]">タグ</div>
+      <div className="flex flex-col md:flex-row w-full w-full justify-center items-center px-6 gap-2 pt-10 pb-10">
+        <div className="md:w-[20%]">タグ</div>
         <input
           type="text"
           placeholder="タスクのタグ..."
@@ -126,8 +126,8 @@ export function AddTask() {
           className="w-[60%] p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
-      <div className="flex flex-row w-full w-full justify-center items-center px-6 gap-2 pt-10 pb-10">
-        <div className="w-[20%]">優先度</div>
+      <div className="flex flex-col md:flex-row w-full w-full justify-center items-center px-6 gap-2 pt-10 pb-10">
+        <div className="md:w-[20%]">優先度</div>
         <input
           type="number"
           min="1"
@@ -145,9 +145,9 @@ export function AddTask() {
           className="w-[60%] p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
-      <div className="flex flex-col w-full w-full justify-center items-center px-6 gap-2 pt-10 pb-10">
-        <div className="flex flex-row justify-center items-center w-full">
-          <div className="w-[20%]">タスクの締切</div>
+      <div className="flex flex-col w-full w-full justify-center items-center px-6 pt-10 pb-10">
+        <div className="flex flex-col md:flex-row justify-center items-center w-full gap-2">
+          <div className="md:w-[20%]">タスクの締切</div>
           <input
             type="date"
             min={today}
@@ -174,8 +174,8 @@ export function AddTask() {
           className="w-[60%] p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div> */}
-      <div className="flex flex-row w-full w-full justify-center items-center px-6 gap-2 pt-10 pb-10">
-        <div className="w-[20%]">説明</div>
+      <div className="flex flex-col md:flex-row w-full w-full justify-center items-center px-6 gap-2 pt-10 pb-10">
+        <div className="md:w-[20%]">説明</div>
         <input
           type="text"
           placeholder="タスクの詳細..."
