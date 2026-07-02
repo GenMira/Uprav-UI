@@ -173,7 +173,7 @@ export function EditTask({editingTaskID, setEditingTaskID, setActiveTab}: {editi
       </div>
 
       <div className="flex flex-col md:flex-row w-full w-full justify-center items-center px-6 gap-2 pt-10 md:pt-20 pb-10">
-        <div className="md:w-[20%]">タスク名</div>
+        <div className="md:w-[20%] text-black">タスク名</div>
         <input
           type="text"
           placeholder="新規タスク..."
@@ -183,7 +183,7 @@ export function EditTask({editingTaskID, setEditingTaskID, setActiveTab}: {editi
         />
       </div>
       <div className="flex flex-col md:flex-row w-full w-full justify-center items-center px-6 gap-2 pt-10 pb-10">
-        <div className="md:w-[20%]">タグ</div>
+        <div className="md:w-[20%] text-black">タグ</div>
         <input
           type="text"
           placeholder="タスクのタグ..."
@@ -193,7 +193,7 @@ export function EditTask({editingTaskID, setEditingTaskID, setActiveTab}: {editi
         />
       </div>
       <div className="flex flex-col md:flex-row w-full w-full justify-center items-center px-6 gap-2 pt-10 pb-10">
-        <div className="md:w-[20%]">優先度</div>
+        <div className="md:w-[20%] text-black">優先度</div>
         <input
           type="number"
           min="1"
@@ -213,7 +213,7 @@ export function EditTask({editingTaskID, setEditingTaskID, setActiveTab}: {editi
       </div>
       <div className="flex flex-col w-full w-full justify-center items-center px-6 gap-2 pt-10 pb-10">
         <div className="flex flex-col md:flex-row justify-center items-center w-full gap-2">
-          <div className="md:w-[20%]">タスクの締切</div>
+          <div className="md:w-[20%] text-black">タスクの締切</div>
           <input
             type="date"
             min={today}

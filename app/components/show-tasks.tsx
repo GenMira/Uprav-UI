@@ -186,7 +186,7 @@ export function ShowTask({ setEditingTaskID, setActiveTab }: ShowTaskProps) {
                 <select
                   value={filterPriority}
                   onChange={(e) => setFilterPriority(Number(e.target.value))}
-                  className="text-sm p-1.5 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                  className="text-sm p-1.5 bg-white appearance-none border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
                 >
                   <option value={0}>-</option>
                   <option value={1}>1</option>
