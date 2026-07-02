@@ -163,7 +163,7 @@ export function EditTask({editingTaskID, setEditingTaskID, setActiveTab}: {editi
       <div className="h-1/3 w-full flex items-end justify-center">
         <h2 className="text-xl pt-10 font-bold">タスク編集</h2>
       </div>
-      <div className="flex items-right justify-end w-[80%] px-6 pt-4">
+      <div className="flex items-right justify-center md:justify-end w-[80%] px-6 pt-4">
         <button
           className="bg-gray-100 text-black px-4 py-2 rounded-lg hover:bg-gray-300"
           onClick={() => cansel()}
@@ -172,8 +172,8 @@ export function EditTask({editingTaskID, setEditingTaskID, setActiveTab}: {editi
         </button>
       </div>
 
-      <div className="flex flex-row w-full w-full justify-center items-center px-6 gap-2 pt-20 pb-10">
-        <div className="w-[20%]">タスク名</div>
+      <div className="flex flex-col md:flex-row w-full w-full justify-center items-center px-6 gap-2 pt-10 md:pt-20 pb-10">
+        <div className="md:w-[20%]">タスク名</div>
         <input
           type="text"
           placeholder="新規タスク..."
@@ -182,8 +182,8 @@ export function EditTask({editingTaskID, setEditingTaskID, setActiveTab}: {editi
           className="w-[60%] p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
-      <div className="flex flex-row w-full w-full justify-center items-center px-6 gap-2 pt-10 pb-10">
-        <div className="w-[20%]">タグ</div>
+      <div className="flex flex-col md:flex-row w-full w-full justify-center items-center px-6 gap-2 pt-10 pb-10">
+        <div className="md:w-[20%]">タグ</div>
         <input
           type="text"
           placeholder="タスクのタグ..."
@@ -192,8 +192,8 @@ export function EditTask({editingTaskID, setEditingTaskID, setActiveTab}: {editi
           className="w-[60%] p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
-      <div className="flex flex-row w-full w-full justify-center items-center px-6 gap-2 pt-10 pb-10">
-        <div className="w-[20%]">優先度</div>
+      <div className="flex flex-col md:flex-row w-full w-full justify-center items-center px-6 gap-2 pt-10 pb-10">
+        <div className="md:w-[20%]">優先度</div>
         <input
           type="number"
           min="1"
@@ -212,8 +212,8 @@ export function EditTask({editingTaskID, setEditingTaskID, setActiveTab}: {editi
         />
       </div>
       <div className="flex flex-col w-full w-full justify-center items-center px-6 gap-2 pt-10 pb-10">
-        <div className="flex flex-row justify-center items-center w-full">
-          <div className="w-[20%]">タスクの締切</div>
+        <div className="flex flex-col md:flex-row justify-center items-center w-full gap-2">
+          <div className="md:w-[20%]">タスクの締切</div>
           <input
             type="date"
             min={today}
@@ -233,8 +233,8 @@ export function EditTask({editingTaskID, setEditingTaskID, setActiveTab}: {editi
           />
         </div>
       </div>
-      <div className="flex flex-row w-full w-full justify-center items-center px-6 gap-2 pt-10 pb-10">
-        <div className="w-[20%]">説明</div>
+      <div className="flex flex-col md:flex-row w-full w-full justify-center items-center px-6 gap-2 pt-10 pb-10">
+        <div className="md:w-[20%]">説明</div>
         <input
           type="text"
           placeholder="タスクの詳細..."

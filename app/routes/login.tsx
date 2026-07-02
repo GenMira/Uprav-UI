@@ -74,7 +74,7 @@ export default function Login() {
 
   return(
     <div className="flex flex-col h-screen w-full bg-gray-100 justify-center items-center">
-      <div className="flex flex-col w-[50%]  justify-center bg-white items-center gap-5 p-6 rounded-xl">
+      <div className="flex flex-col w-full md:w-[50%]  justify-center bg-white items-center gap-5 p-6 rounded-xl">
         <h1 className="text-4xl font-bold text-gray-800">
           ログイン
         </h1>
