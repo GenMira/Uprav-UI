@@ -152,7 +152,7 @@ export function ShowTask({ setEditingTaskID, setActiveTab }: ShowTaskProps) {
   return (
     <div className="flex flex-col h-screen w-full bg-gray-100">
       <div className="flex h-20 justify-center items-center bg-blue-300 gap-4 p-4">
-        <h2 className="text-xl font-bold">タスク一覧</h2>
+        <h2 className="text-xl font-bold text-black">タスク一覧</h2>
         
         <div className="flex items-center gap-2">
           <button
@@ -186,7 +186,7 @@ export function ShowTask({ setEditingTaskID, setActiveTab }: ShowTaskProps) {
                 <select
                   value={filterPriority}
                   onChange={(e) => setFilterPriority(Number(e.target.value))}
-                  className="text-sm p-1.5 bg-white appearance-none border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                  className="text-sm text-black p-1.5 bg-white appearance-none border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
                 >
                   <option value={0}>-</option>
                   <option value={1}>1</option>
@@ -204,7 +204,7 @@ export function ShowTask({ setEditingTaskID, setActiveTab }: ShowTaskProps) {
                       value="gte"
                       checked={isPriorityAbove}
                       onChange={() => setIsPriorityAbove(true)}
-                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 accent-blue-500 cursor-pointer"
+                      className="w-4 h-4 bg-white text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 accent-blue-500 cursor-pointer"
                     />
                     <span className={isPriorityAbove ? "text-blue-600 font-bold" : ""}>以上</span>
                   </label>
@@ -216,7 +216,7 @@ export function ShowTask({ setEditingTaskID, setActiveTab }: ShowTaskProps) {
                       value="lte"
                       checked={!isPriorityAbove}
                       onChange={() => setIsPriorityAbove(false)}
-                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 accent-blue-500 cursor-pointer"
+                      className="w-4 h-4 bg-white text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 accent-blue-500 cursor-pointer"
                     />
                     <span className={!isPriorityAbove ? "text-blue-600 font-bold" : ""}>以下</span>
                   </label>
@@ -239,7 +239,7 @@ export function ShowTask({ setEditingTaskID, setActiveTab }: ShowTaskProps) {
                   min={today}
                   value={filterDate}
                   onChange={(e) => setFilterDate(e.target.value)}
-                  className="text-sm p-1.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                  className="text-sm text-black p-1.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
                 />
                 <div className="flex items-center gap-3 text-sm font-medium text-gray-600">
                   <label className="flex items-center gap-1 cursor-pointer select-none">
@@ -249,7 +249,7 @@ export function ShowTask({ setEditingTaskID, setActiveTab }: ShowTaskProps) {
                       value="gte"
                       checked={isDateAbove}
                       onChange={() => setIsDateAbove(true)}
-                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 accent-blue-500 cursor-pointer"
+                      className="w-4 h-4 bg-white text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 accent-blue-500 cursor-pointer"
                     />
                     <span className={isDateAbove ? "text-blue-600 font-bold" : ""}>以降</span>
                   </label>
@@ -261,7 +261,7 @@ export function ShowTask({ setEditingTaskID, setActiveTab }: ShowTaskProps) {
                       value="lte"
                       checked={!isDateAbove}
                       onChange={() => setIsDateAbove(false)}
-                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 accent-blue-500 cursor-pointer"
+                      className="w-4 h-4 bg-white text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 accent-blue-500 cursor-pointer"
                     />
                     <span className={!isDateAbove ? "text-blue-600 font-bold" : ""}>以前</span>
                   </label>
@@ -281,7 +281,7 @@ export function ShowTask({ setEditingTaskID, setActiveTab }: ShowTaskProps) {
                 <select
                   value={filterTag}
                   onChange={(e) => setFilterTag(e.target.value)}
-                  className="text-sm p-1.5 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                  className="text-sm text-black p-1.5 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
                 >
                   <option value="all">すべてのタグ</option>
                   <option value="none">タグなし</option>
@@ -398,7 +398,7 @@ export function ShowTask({ setEditingTaskID, setActiveTab }: ShowTaskProps) {
                   </span>
                   <div className="flex flex-row items-center gap-1 pt-2">
                     <img src="https://img.icons8.com/?size=15&id=H0JqzxqGxPQm&format=png&color=000000" alt="from Icons8" />
-                    <span className={`${isUrgent ? 'text-white' : 'text-gray-800'}font-medium`}>
+                    <span className={`${isUrgent ? 'text-white' : 'text-gray-800'} font-medium`}>
                       {formatDeadline(task.deadline, task.is_everyday)}
                     </span>
                   </div>

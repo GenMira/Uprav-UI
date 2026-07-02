@@ -161,7 +161,7 @@ export function EditTask({editingTaskID, setEditingTaskID, setActiveTab}: {editi
   return (
     <div className="flex flex-col items-center bg-gray-100 rounded-2xl">
       <div className="h-1/3 w-full flex items-end justify-center">
-        <h2 className="text-xl pt-10 font-bold">タスク編集</h2>
+        <h2 className="text-xl text-black pt-10 font-bold">タスク編集</h2>
       </div>
       <div className="flex items-right justify-center md:justify-end w-[80%] px-6 pt-4">
         <button
@@ -179,7 +179,7 @@ export function EditTask({editingTaskID, setEditingTaskID, setActiveTab}: {editi
           placeholder="新規タスク..."
           value={taskName}
           onChange={(e) => setTaskName(e.target.value)}
-          className="w-[60%] p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-[60%] p-2 text-black border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
       <div className="flex flex-col md:flex-row w-full w-full justify-center items-center px-6 gap-2 pt-10 pb-10">
@@ -189,7 +189,7 @@ export function EditTask({editingTaskID, setEditingTaskID, setActiveTab}: {editi
           placeholder="タスクのタグ..."
           value={tagName}
           onChange={(e) => setTagName(e.target.value)}
-          className="w-[60%] p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-[60%] p-2 text-black border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
       <div className="flex flex-col md:flex-row w-full w-full justify-center items-center px-6 gap-2 pt-10 pb-10">
@@ -208,7 +208,7 @@ export function EditTask({editingTaskID, setEditingTaskID, setActiveTab}: {editi
               setPriority(Number(val));
             }
           }}
-          className="w-[60%] p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-[60%] p-2 text-black border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
       <div className="flex flex-col w-full w-full justify-center items-center px-6 gap-2 pt-10 pb-10">
@@ -219,7 +219,7 @@ export function EditTask({editingTaskID, setEditingTaskID, setActiveTab}: {editi
             min={today}
             value={deadline}
             onChange={(e) => setDeadline(e.target.value)}
-            className="w-[60%] p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-[60%] p-2 text-black border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
         <div className="flex flex-row justify-between items-center w-[80%] pt-4 mx-auto">
@@ -229,18 +229,18 @@ export function EditTask({editingTaskID, setEditingTaskID, setActiveTab}: {editi
             type="checkbox"
             checked={isEverydayTask}
             onChange={(e) => setIsEverydayTask(e.target.checked)}
-            className="w-5 h-5 accent-blue-500 cursor-pointer"
+            className="w-5 h-5 bg-white accent-blue-500 cursor-pointer"
           />
         </div>
       </div>
       <div className="flex flex-col md:flex-row w-full w-full justify-center items-center px-6 gap-2 pt-10 pb-10">
-        <div className="md:w-[20%]">説明</div>
+        <div className="md:w-[20%] text-black">説明</div>
         <input
           type="text"
           placeholder="タスクの詳細..."
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          className="w-[60%] p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-[60%] p-2 text-black border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
 
