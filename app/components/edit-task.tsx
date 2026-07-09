@@ -26,6 +26,9 @@ export function EditTask({editingTaskID, setEditingTaskID, setActiveTab}: {editi
   const [isEverydayTask, setIsEverydayTask] = useState<boolean>(false);
   const [description, setDescription] = useState("");
 
+  const [existingTags, setExistingTags] = useState<string[]>([]);
+  const [selectedSelectValue, setSelectedSelectValue] = useState<string>("");
+
   const today = new Date().toLocaleDateString("sv-SE");
 
   const resertForm = () => {
@@ -152,9 +155,34 @@ export function EditTask({editingTaskID, setEditingTaskID, setActiveTab}: {editi
       toast.error("通信エラーが発生しました");
     }
   };
+    const getTags = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch("https://uprav.trap.show/api/tasks/tags", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`, 
+        },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        // 空白やnullを除外して一意な配列にする
+        if (data && Array.isArray(data.tags)) {
+          const filteredTags = data.tags.filter((tag: string) => tag && tag.trim() !== "");
+          setExistingTags(filteredTags);
+        } else {
+          setExistingTags([]);
+        }
+      }
+    } catch (err) {
+      console.error("Failed to fetch tags:", err);
+    }
+  };
+
 
   useEffect(() => {
     getTaskDetails();
+    getTags();
   }, []);
 
 
@@ -179,22 +207,54 @@ export function EditTask({editingTaskID, setEditingTaskID, setActiveTab}: {editi
           placeholder="新規タスク..."
           value={taskName}
           onChange={(e) => setTaskName(e.target.value)}
-          className="w-[60%] p-2 text-black border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-[60%] p-2 bg-white text-black border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
-      <div className="flex flex-col md:flex-row w-full w-full justify-center items-center px-6 gap-2 pt-10 pb-10">
+      <div className="flex flex-col md:flex-row w-full w-full justify-center items-center md:items-start px-6 gap-2 pt-10 pb-10">
         <div className="md:w-[20%] text-black">タグ</div>
-        <input
-          type="text"
-          placeholder="タスクのタグ..."
-          value={tagName}
-          onChange={(e) => setTagName(e.target.value)}
-          className="w-[60%] p-2 text-black border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
+        <div className="w-[60%] flex flex-col gap-2">
+          <select
+            value={selectedSelectValue}
+            onChange={(e) => {
+              const val = e.target.value;
+              setSelectedSelectValue(val);
+              
+              if (val !== "__NEW_TAG__") {
+                setTagName(val); 
+              } else {
+                setTagName("");
+              }
+            }}
+            className="flex-1 p-2 bg-white text-black border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer text-sm"
+          >
+            <option value="">-</option>
+            
+            {existingTags.map((tag) => (
+              <option key={tag} value={tag}>
+                {tag}
+              </option>
+            ))}
+            
+            <option value="__NEW_TAG__" className="text-blue-600 font-semibold">
+              + 新しいタグを追加...
+            </option>
+          </select>
+
+          {selectedSelectValue === "__NEW_TAG__" && (
+            <input
+              type="text"
+              placeholder="新しいタグ名を入力..."
+              value={tagName}
+              onChange={(e) => setTagName(e.target.value)}
+              className="flex-1 p-2 text-black bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm animate-fadeIn"
+              autoFocus // 出現した瞬間にキーボード入力できるようにする
+            />
+          )}
+        </div>
       </div>
       <div className="flex flex-col md:flex-row w-full w-full justify-center items-center px-6 gap-2 pt-10 pb-10">
         <div className="md:w-[20%] text-black">優先度</div>
-        <input
+        {/* <input
           type="number"
           min="1"
           max="5"
@@ -209,7 +269,21 @@ export function EditTask({editingTaskID, setEditingTaskID, setActiveTab}: {editi
             }
           }}
           className="w-[60%] p-2 text-black border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
+        /> */}
+        <select
+          value={priority}
+          onChange={(e) => {
+            const val = e.target.value;
+            setPriority(Number(val));
+          }}
+          className="w-[60%] p-2 bg-white text-black border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value={1}>1</option>
+          <option value={2}>2</option>
+          <option value={3}>3</option>
+          <option value={4}>4</option>
+          <option value={5}>5</option>
+        </select>
       </div>
       <div className="flex flex-col w-full w-full justify-center items-center px-6 gap-2 pt-10 pb-10">
         <div className="flex flex-col md:flex-row justify-center items-center w-full gap-2">
@@ -219,7 +293,7 @@ export function EditTask({editingTaskID, setEditingTaskID, setActiveTab}: {editi
             min={today}
             value={deadline}
             onChange={(e) => setDeadline(e.target.value)}
-            className="w-[60%] p-2 text-black border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-[60%] p-2 bg-white text-black border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
         <div className="flex flex-row justify-between items-center w-[80%] pt-4 mx-auto">
@@ -240,7 +314,7 @@ export function EditTask({editingTaskID, setEditingTaskID, setActiveTab}: {editi
           placeholder="タスクの詳細..."
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          className="w-[60%] p-2 text-black border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-[60%] p-2 bg-white text-black border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
 
