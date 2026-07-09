@@ -35,6 +35,7 @@ const priorityColors = [
   "#77C6FF", // 4
   "#77C6FF", // 5
   "#FF6751", //expired
+  "#FFAA6D", //today
 ];
 
 
@@ -325,9 +326,10 @@ export function ShowTask({ setEditingTaskID, setActiveTab }: ShowTaskProps) {
           {sortTasks(tasks)
             .filter((task) =>{
               if (task.is_everyday) {
-                const today = new Date().toLocaleDateString("sv-SE");
-                const isDoneToday = task.deadline.startsWith(today);
-                
+                const now = new Date();
+                const offsetDate = new Date(now.getTime() - 5 * 60 * 60 * 1000);
+                const adjustedToday = offsetDate.toLocaleDateString("sv-SE");
+                const isDoneToday = task.deadline.startsWith(adjustedToday);              
                 if (isDoneToday) return false;
               }
 
@@ -372,24 +374,12 @@ export function ShowTask({ setEditingTaskID, setActiveTab }: ShowTaskProps) {
               return true
             })
             .map((task, index) => {
-              let bgClass = "#F3F4F6";
-
-              if (task.is_everyday) {
-                bgClass = priorityColors[0];
-              } 
-              else if (isExpired(task.deadline)) {
-                bgClass = priorityColors[6];
-              } 
-              else {
-                bgClass = priorityColors[task.priority] || "#F3F4F6";
-              }
-
               //const isUrgent = task.priority === 5;
               const isUrgent = false;
               return(
                 <li
                   key={`${task.id}-${index}`}
-                  style={{ backgroundColor: bgClass }}
+                  style={{ backgroundColor: getTaskBGColor(task) }}
                   onClick={() => setSelectedTask(task)}
                   className="card-interactive"
                 >
@@ -528,11 +518,26 @@ const formatDeadline = (deadline: string, isEveryday: boolean): string => {
   }
 };
 
-const isExpired = (deadline: string): boolean => {
+const getTaskBGColor = (task : Task): string =>{
+  if (task.is_everyday) {
+    return priorityColors[0];
+  }  
+
   const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const date = new Date(deadline);
-  return date < today;
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  const taskDate = new Date(task.deadline);
+  const date = new Date(taskDate.getFullYear(), taskDate.getMonth(), taskDate.getDate()).getTime();
+
+  if(date < today){
+    return priorityColors[6]; // 期限切れ
+  }
+
+  if(date === today){
+    console.log("today task: " + task.name);
+    return priorityColors[7]; // 今日が締切
+  }
+
+  return priorityColors[task.priority] || "#F3F4F6";
 }
 
 const sortTasks = (tasks: Task[]): Task[] => {
@@ -553,6 +558,10 @@ const sortTasks = (tasks: Task[]): Task[] => {
     // 1. 期限切れ（今日より前）かどうかの判定
     const isExpiredA = dA < today;
     const isExpiredB = dB < today;
+
+    if (a.is_everyday && !b.is_everyday) return -1; // aが毎日タスクならaを先にする
+    if (!a.is_everyday && b.is_everyday) return 1;  // bが毎日タスクならbを先にする
+    if (a.is_everyday && b.is_everyday) return 0; // 両方とも毎日タスクなら順序は変えない
 
     // 条件①: 期限切れのタスクは最優先で表示
     if (isExpiredA && !isExpiredB) return -1; // aが期限切れ、bが未期限ならaを先にする
