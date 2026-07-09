@@ -87,7 +87,7 @@ export default function Login() {
             placeholder="入力..."
             value={userName}
             onChange={(e) => setUserName(e.target.value)}
-            className="w-[60%] p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-[60%] p-2 bg-white text-black border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
         <div className="flex flex-col w-full justify-center items-center  mt-5 gap-5">
@@ -95,11 +95,11 @@ export default function Login() {
             password
           </label>
           <input
-            type="text"
+            type="password"
             placeholder="入力..."
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-[60%] p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-[60%] p-2 bg-white text-black border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
         <Link 
