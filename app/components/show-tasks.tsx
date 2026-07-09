@@ -460,7 +460,7 @@ export function ShowTask({ setEditingTaskID, setActiveTab }: ShowTaskProps) {
               {selectedTask.description && (
                 <div>
                   <p className="text-sm text-gray-400 font-bold">詳細</p>
-                  <p className="text-base text-gray-700">{selectedTask.description}</p>
+                  <p className="text-base whitespace-pre-wrap text-gray-700">{selectedTask.description}</p>
                 </div>
               )}
 

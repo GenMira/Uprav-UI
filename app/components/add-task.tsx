@@ -19,7 +19,7 @@ interface TaskRequest {
 export function AddTask() {
   const [taskName, setTaskName] = useState("");
   const [tagName, setTagName] = useState("");
-  const [priority, setPriority] = useState<number>(0);
+  const [priority, setPriority] = useState<number>(1);
   const [deadline, setDeadline] = useState("");
   const [isEverydayTask, setIsEverydayTask] = useState<boolean>(false);
   const [description, setDescription] = useState("");
@@ -236,12 +236,11 @@ export function AddTask() {
       </div> */}
       <div className="flex flex-col md:flex-row w-full w-full justify-center items-center px-6 gap-2 pt-10 pb-10">
         <div className="md:w-[20%] text-black">説明</div>
-        <input
-          type="text"
+        <textarea
           placeholder="タスクの詳細..."
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          className="w-[60%] p-2 bg-white text-black border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-[60%] p-2 bg-white text-black whitespace-pre-wrap border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
 
