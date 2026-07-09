@@ -135,8 +135,9 @@ export function ShowTask({ setEditingTaskID, setActiveTab }: ShowTaskProps) {
   };
 
   const doneEverydaytask = async (task: Task) => {
-    console.log("Done everyday task id: " + task.id);
-    const today = new Date().toLocaleDateString("sv-SE");
+    const now = new Date();
+    const offsetDate = new Date(now.getTime() - 5 * 60 * 60 * 1000);
+    const today = offsetDate.toLocaleDateString("sv-SE");
     const DoneTask: Task = {
       ...task,
       deadline: `${today}T00:00:00Z`,
@@ -533,7 +534,6 @@ const getTaskBGColor = (task : Task): string =>{
   }
 
   if(date === today){
-    console.log("today task: " + task.name);
     return priorityColors[7]; // 今日が締切
   }
 
