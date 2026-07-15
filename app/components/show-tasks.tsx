@@ -380,10 +380,14 @@ export function ShowTask({ setEditingTaskID, setActiveTab }: ShowTaskProps) {
               return(
                 <li
                   key={`${task.id}-${index}`}
-                  style={{ backgroundColor: getTaskBGColor(task) }}
+                  //style={{ backgroundColor: getTaskBGColor(task) }}
                   onClick={() => setSelectedTask(task)}
-                  className="card-interactive"
+                  className="card-interactive relative overflow-hidden bg-white"
                 >
+                  <div 
+                    style={{ backgroundColor: getTaskBGColor(task) }} 
+                    className="absolute top-0 left-0 right-0 h-[10%]"
+                  />
                   <span className={`${isUrgent ? 'text-white font-bold' : 'text-gray-800 font-semibold'}`}>
                     {task.name}
                   </span>

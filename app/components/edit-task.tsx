@@ -207,12 +207,12 @@ export function EditTask({editingTaskID, setEditingTaskID, setActiveTab}: {editi
           placeholder="新規タスク..."
           value={taskName}
           onChange={(e) => setTaskName(e.target.value)}
-          className="w-[60%] p-2 bg-white text-black border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-[80%] md:w-[60%] p-2 bg-white text-black border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
       <div className="flex flex-col md:flex-row w-full w-full justify-center items-center md:items-start px-6 gap-2 pt-10 pb-10">
         <div className="md:w-[20%] text-black">タグ</div>
-        <div className="w-[60%] flex flex-col gap-2">
+        <div className="w-[80%] md:w-[60%] flex flex-col gap-2">
           <select
             value={selectedSelectValue}
             onChange={(e) => {
@@ -276,7 +276,7 @@ export function EditTask({editingTaskID, setEditingTaskID, setActiveTab}: {editi
             const val = e.target.value;
             setPriority(Number(val));
           }}
-          className="w-[60%] p-2 bg-white text-black border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-[80%] md:w-[60%] p-2 bg-white text-black border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value={1}>1</option>
           <option value={2}>2</option>
@@ -293,7 +293,7 @@ export function EditTask({editingTaskID, setEditingTaskID, setActiveTab}: {editi
             min={today}
             value={deadline}
             onChange={(e) => setDeadline(e.target.value)}
-            className="w-[60%] p-2 bg-white text-black border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-[80%] md:w-[60%] p-2 bg-white text-black border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
         <div className="flex flex-row justify-between items-center w-[80%] pt-4 mx-auto">
@@ -313,7 +313,7 @@ export function EditTask({editingTaskID, setEditingTaskID, setActiveTab}: {editi
           placeholder="タスクの詳細..."
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          className="w-[60%] p-2 bg-white text-black whitespace-pre-wrap border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-[80%] md:w-[60%] p-2 bg-white text-black whitespace-pre-wrap border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
 
