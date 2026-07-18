@@ -188,8 +188,8 @@ export function EditTask({editingTaskID, setEditingTaskID, setActiveTab}: {editi
 
   return (
     <div className="flex flex-col items-center bg-gray-100 rounded-2xl">
-      <div className="h-1/3 w-full flex items-end justify-center">
-        <h2 className="text-xl text-black pt-10 font-bold">タスク編集</h2>
+      <div className="h-20 w-full flex items-center justify-center bg-blue-300">
+        <h2 className="text-xl text-black pt-5 pb-5 font-bold">タスク編集</h2>
       </div>
       <div className="flex items-right justify-center md:justify-end w-[80%] px-6 pt-4">
         <button

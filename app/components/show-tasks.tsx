@@ -152,7 +152,7 @@ export function ShowTask({ setEditingTaskID, setActiveTab }: ShowTaskProps) {
   }, []);
 
   return (
-    <div className="flex flex-col h-screen w-full bg-gray-100">
+    <div className="flex flex-col min-h-screen w-full bg-gray-100">
       <div className="flex h-20 justify-center items-center bg-blue-300 gap-4 p-4">
         <h2 className="text-xl font-bold text-black">タスク一覧</h2>
         

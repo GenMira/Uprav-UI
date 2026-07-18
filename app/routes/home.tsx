@@ -5,6 +5,7 @@ import {AddTask} from "../components/add-task";
 import { Welcome } from "../welcome/welcome";
 import { ShowTask } from "../components/show-tasks";
 import { EditTask } from "../components/edit-task";
+import { Group } from "../components/group";
 import { Toaster,toast } from 'react-hot-toast';
 
 export function meta({}: Route.MetaArgs) {
@@ -167,16 +168,17 @@ export default function Home() {
                 setActiveTab("editTask")
                 setIsSidebarOpen(false)
               }}
-              className={`block w-full text-left p-2 rounded transition-colors ${
-                activeTab === 'editTask' ? 'bg-blue-100 text-blue-600' : 'hover:bg-[rgba(50,177,161,1)]'
-              }`}
+              className={`block w-full text-left p-2 rounded transition-colors ${activeTab === 'editTask' ? 'bg-blue-100 text-blue-600' : 'hover:bg-[rgba(50,177,161,1)]'}`}
             >
               タスク編集
             </button>
           )}
 
           <button 
-            //onClick={() => setActiveTab("group")}
+            onClick={() => {
+              setActiveTab("group")
+              setIsSidebarOpen(false)
+            }}
             className={`block w-full text-left p-2 rounded transition-colors ${activeTab === 'group' ? 'bg-blue-100 text-blue-600' : 'hover:bg-[rgba(50,177,161,1)]'}`}
           >
             グループ
@@ -235,6 +237,7 @@ export default function Home() {
         {/* {activeTab === "welcome" && <Welcome />} */}
         {activeTab === "showTasks" && <ShowTask setEditingTaskID={setEditingTaskID} setActiveTab={setActiveTab}/>}
         {activeTab === "editTask" && editingTaskID !== null && <EditTask editingTaskID={editingTaskID} setEditingTaskID={setEditingTaskID} setActiveTab={setActiveTab}/>}
+        {activeTab === "group" && <Group />}
       </main>
       
       <Toaster position="top-center" reverseOrder={false} />
