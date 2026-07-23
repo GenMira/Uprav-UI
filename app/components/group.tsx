@@ -202,6 +202,57 @@ export function Group({uid}:{uid:string | null}) {
 
   }
 
+  const updateGroup = async () => {
+    if (!selectedGroup) return;
+    if (groupName.trim() === "") {
+      toast.error("グループ名を入力してください。");
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch(`https://uprav.trap.show/api/groups/${selectedGroup.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          name: groupName,
+          members: currentUsers.map((u) => u.uid),
+        }),
+      });
+
+      if (!response.ok) throw new Error("Failed to update group");
+
+      const updatedGroup = await response.json();
+
+      setGroups((prev) =>
+        prev.map((g) => (g.id === selectedGroup.id ? updatedGroup : g))
+      );
+
+      resetGroupData();
+      toast.success("グループを更新しました！");
+    } catch (error) {
+      toast.error("グループの更新に失敗しました");
+    }
+  };
+
+  const handleOpenCreateModal = () => {
+    resetGroupData();
+    setIsEditing(false);
+    setSelectedGroup({ id: "", name: "", members: [{ uid: 0, name: "" }] });
+    insertMyself();
+  };
+
+  const handleOpenEditModal = (group: Group) => {
+    resetGroupData();
+    setIsEditing(true);
+    setSelectedGroup(group);
+    setGroupName(group.name); // 既存のグループ名をセット
+    setCurrentUsers(group.members || []); // 既存のメンバーをセット
+  };
+
     
 
   useEffect(() => {
@@ -209,24 +260,15 @@ export function Group({uid}:{uid:string | null}) {
   }, []);
 
   return(
-    <div className="flex flex-col min-h-screen w-full items-center bg-gray-100 rounded-2xl">
+<div className="flex flex-col min-h-screen w-full items-center bg-gray-100 rounded-2xl">
       <div className="h-20 w-full flex items-center justify-center bg-orange-200">
         <h2 className="text-xl text-black pt-5 pb-5 font-bold">グループ</h2>
       </div>
+
       <div className="flex justify-center items-center w-full px-6 pt-4 pb-10 gap-5">
         <button
           className="hover:bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded transition-colors"
-          onClick={()=>{
-            const newGroup: Group = {
-              id: "",
-              name: "",
-              members: [{ uid: 0, name: "" }], 
-            };
-            setIsEditing(false);
-            insertMyself();
-            setSelectedGroup(newGroup);
-          }
-          }
+          onClick={handleOpenCreateModal}
         >
           新規グループを作成
         </button>
@@ -235,68 +277,56 @@ export function Group({uid}:{uid:string | null}) {
       <div className="flex flex-col p-6 w-full">
         <ul className="grid grid-cols-1 gap-4 w-full">
           {groups.length !== 0 ? (
-            groups.map((group, index) => {
-              return (
-                <li
-                  key={`${group.id}-${index}`}
-                  onClick={() => {
-                    setIsEditing(true);
-                    setSelectedGroup(group)
-                  }}
-                  className="flex flex-col items-start gap-3 p-4 pl-6 card-interactive relative overflow-hidden bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow cursor-pointer"
-                >
-                  <div className="absolute top-0 left-0 bottom-0 w-2 bg-green-400" />
-
-                  <span className="text-gray-800 font-semibold text-lg">
-                    {group.name}
-                  </span>
-
-                  <div className="flex flex-wrap gap-2 w-full">
-                    {group.members && group.members.length > 0 && (
-                      group.members.map((user) => (
-                        <div
-                          key={user.uid}
-                          className="flex items-center gap-1 px-3 py-1.5 bg-blue-50 text-blue-500 border border-gray-300  text-sm font-medium rounded-lg shadow-sm"
-                        >
-                          <span>{user.name} ({user.uid})</span>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </li>
-              );
-            })
+            groups.map((group, index) => (
+              <li
+                key={`${group.id}-${index}`}
+                onClick={() => handleOpenEditModal(group)} // 💡 編集用ハンドラーの実行
+                className="flex flex-col items-start gap-3 p-4 pl-6 card-interactive relative overflow-hidden bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow cursor-pointer"
+              >
+                <div className="absolute top-0 left-0 bottom-0 w-2 bg-green-400" />
+                <span className="text-gray-800 font-semibold text-lg">{group.name}</span>
+                <div className="flex flex-wrap gap-2 w-full">
+                  {group.members?.map((user) => (
+                    <div
+                      key={user.uid}
+                      className="flex items-center gap-1 px-3 py-1.5 bg-blue-50 text-blue-500 border border-gray-300 text-sm font-medium rounded-lg shadow-sm"
+                    >
+                      <span>{user.name} ({user.uid})</span>
+                    </div>
+                  ))}
+                </div>
+              </li>
+            ))
           ) : (
             <li className="text-gray-500 text-center py-8">
-              グループが見つかりません。<br />
-              新規グループを作成するか、既存のグループに参加してください。
+              グループが見つかりません。<br />新規グループを作成するか、既存のグループに参加してください。
             </li>
           )}
         </ul>
       </div>
 
-      {selectedGroup && !isEditing &&(
-        <div 
+      {selectedGroup && (
+        <div
           className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 animate-fade-in"
-          onClick={() => setSelectedGroup(null)}
+          onClick={resetGroupData}
         >
-          <div 
+          <div
             className="bg-white rounded-2xl p-10 w-[60%] mx-4 shadow-2xl relative"
             onClick={(e) => e.stopPropagation()}
           >
-            <button 
-              onClick={() => setSelectedGroup(null)}
+            <button
+              onClick={resetGroupData}
               className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl"
             >
               ✕
             </button>
-            <div
-              className="text-center text-black font-bold"
-            >
-              グループを新規作成
+            
+            <div className="text-center text-black font-bold">
+              {isEditing ? "グループを編集" : "グループを新規作成"}
             </div>
-            <div className="flex flex-col md:flex-row w-full w-full justify-center items-center px-6 gap-2 pt-20 pb-10">
-              <div className="md:w-[20%] text-black">新しいグループ名</div>
+
+            <div className="flex flex-col md:flex-row w-full justify-center items-center px-6 gap-2 pt-10 pb-6">
+              <div className="md:w-[20%] text-black">グループ名</div>
               <input
                 type="text"
                 placeholder="グループ名..."
@@ -305,12 +335,10 @@ export function Group({uid}:{uid:string | null}) {
                 className="w-[80%] md:w-[60%] p-2 bg-white text-black border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
+
             <div className="w-full">
               <div className="flex flex-col md:flex-row w-full justify-center items-center px-6 gap-2 pb-4">
-                <div className="md:w-[20%] text-black font-medium">
-                  メンバーのUID
-                </div>
-
+                <div className="md:w-[20%] text-black font-medium">メンバーのUID</div>
                 <div className="w-[80%] md:w-[60%] flex gap-2">
                   <input
                     type="number"
@@ -333,7 +361,6 @@ export function Group({uid}:{uid:string | null}) {
               {currentUsers.length > 0 && (
                 <div className="flex flex-row flex-wrap justify-center items-center px-6 gap-2">
                   <div className="hidden md:block md:w-[20%]" />
-                  
                   <div className="w-[80%] md:w-[60%] flex flex-wrap gap-2">
                     {currentUsers.map((user) => (
                       <div
@@ -355,18 +382,19 @@ export function Group({uid}:{uid:string | null}) {
                 </div>
               )}
             </div>
-            <div className="w-full flex justify-center pt-20">
-              <button 
-                onClick={() => createGroup()}
-                className="text-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg"
+
+            <div className="w-full flex justify-center pt-10">
+              <button
+                onClick={isEditing ? updateGroup : createGroup}
+                className="text-center px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors"
               >
-                作成
+                {isEditing ? "保存" : "作成"}
               </button>
             </div>
           </div>
-
         </div>
       )}
+
     </div>
   )
 }
