@@ -12,9 +12,10 @@ interface Group {
   members: [GroupMember, ...GroupMember[]]; 
 }
 
-export function Group() {
+export function Group({uid}:{uid:string | null}) {
   const [groups, setGroups] = useState<Group[]>([]);
   const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
+  const [isEditing,setIsEditing] = useState<boolean>(false);
   const [groupName,setGroupName] = useState<string>("");
   const [currentUid, setCurrentUid] = useState<string>("");
   const [currentUsers, setCurrentUsers] = useState<GroupMember[]>([]);
@@ -128,6 +129,81 @@ export function Group() {
     }
   };
 
+  const resetGroupData = () =>{
+    setSelectedGroup(null);
+    setGroupName("");
+    setCurrentUid("");
+    setCurrentUsers([]);
+  }
+
+  const createGroup = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      toast.error("トークンが見つかりません。ログインしてください。");
+      return;
+    }
+
+    const uids = currentUsers.map((user) => user.uid);
+
+    if (groupName==""){
+      toast.error("グループ名を入力してください。");
+      return;
+    }
+
+    try {
+      const response = await fetch("https://uprav.trap.show/api/groups", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          name: groupName,
+          members: uids,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorWithStatus = new Error("Failed to fetch groups") as any;
+        errorWithStatus.status = response.status;
+        throw errorWithStatus;
+      }
+
+      const newGroup = await response.json();
+      console.log("success:", newGroup);
+      setGroups((prevGroups) => [newGroup, ...prevGroups]);
+      resetGroupData();
+      toast.success("グループを作成しました！");
+
+    } catch (error: any) {
+      console.error("エラー:", error);
+      console.log(error.message);
+      toast.error("グループの作成に失敗しました");
+    }
+  };
+
+  const insertMyself = async() =>{
+    if(uid!==null){
+      const parsed = parseInt(uid, 10);
+
+      const isAlreadyAdded = currentUsers.some((user) => user.uid === parsed);
+      if (isAlreadyAdded) {
+        return;
+      }
+
+      const userInfo = await getUserByUid(parsed);
+
+      if (userInfo) {
+        setCurrentUsers([...currentUsers, userInfo]);
+        setCurrentUid(""); 
+      }
+
+    }
+
+  }
+
+    
+
   useEffect(() => {
     getGroups();
   }, []);
@@ -137,7 +213,7 @@ export function Group() {
       <div className="h-20 w-full flex items-center justify-center bg-orange-200">
         <h2 className="text-xl text-black pt-5 pb-5 font-bold">グループ</h2>
       </div>
-      <div className="flex justify-center items-center w-full px-6 pt-4 gap-5">
+      <div className="flex justify-center items-center w-full px-6 pt-4 pb-10 gap-5">
         <button
           className="hover:bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded transition-colors"
           onClick={()=>{
@@ -146,6 +222,8 @@ export function Group() {
               name: "",
               members: [{ uid: 0, name: "" }], 
             };
+            setIsEditing(false);
+            insertMyself();
             setSelectedGroup(newGroup);
           }
           }
@@ -154,34 +232,50 @@ export function Group() {
         </button>
       </div>
 
-      <div className="flex flex-col p-6">
-        <ul className="grid grid-cols-1 gap-4">
+      <div className="flex flex-col p-6 w-full">
+        <ul className="grid grid-cols-1 gap-4 w-full">
           {groups.length !== 0 ? (
             groups.map((group, index) => {
-              return(
+              return (
                 <li
                   key={`${group.id}-${index}`}
-                  onClick={() => setSelectedGroup(group)}
-                  className="card-interactive relative overflow-hidden bg-white"
+                  onClick={() => {
+                    setIsEditing(true);
+                    setSelectedGroup(group)
+                  }}
+                  className="flex flex-col items-start gap-3 p-4 pl-6 card-interactive relative overflow-hidden bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow cursor-pointer"
                 >
-                  <div 
-                    className="absolute top-0 left-0 right-0 h-[10%] bg-red-500"
-                  />
-                  <span className={'text-gray-800 font-semibold'}>
+                  <div className="absolute top-0 left-0 bottom-0 w-2 bg-green-400" />
+
+                  <span className="text-gray-800 font-semibold text-lg">
                     {group.name}
                   </span>
+
+                  <div className="flex flex-wrap gap-2 w-full">
+                    {group.members && group.members.length > 0 && (
+                      group.members.map((user) => (
+                        <div
+                          key={user.uid}
+                          className="flex items-center gap-1 px-3 py-1.5 bg-blue-50 text-blue-500 border border-gray-300  text-sm font-medium rounded-lg shadow-sm"
+                        >
+                          <span>{user.name} ({user.uid})</span>
+                        </div>
+                      ))
+                    )}
+                  </div>
                 </li>
-              )
+              );
             })
-          ):(
-            <li className="text-gray-500 text-center">
-            グループが見つかりません。<br />新規グループを作成するか、既存のグループに参加してください。
+          ) : (
+            <li className="text-gray-500 text-center py-8">
+              グループが見つかりません。<br />
+              新規グループを作成するか、既存のグループに参加してください。
             </li>
           )}
         </ul>
       </div>
 
-      {selectedGroup &&(
+      {selectedGroup && !isEditing &&(
         <div 
           className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 animate-fade-in"
           onClick={() => setSelectedGroup(null)}
@@ -201,7 +295,7 @@ export function Group() {
             >
               グループを新規作成
             </div>
-            <div className="flex flex-col md:flex-row w-full w-full justify-center items-center px-6 gap-2 pt-10 pb-10">
+            <div className="flex flex-col md:flex-row w-full w-full justify-center items-center px-6 gap-2 pt-20 pb-10">
               <div className="md:w-[20%] text-black">新しいグループ名</div>
               <input
                 type="text"
@@ -212,7 +306,7 @@ export function Group() {
               />
             </div>
             <div className="w-full">
-              <div className="flex flex-col md:flex-row w-full justify-center items-center px-6 gap-2 pt-10 pb-4">
+              <div className="flex flex-col md:flex-row w-full justify-center items-center px-6 gap-2 pb-4">
                 <div className="md:w-[20%] text-black font-medium">
                   メンバーのUID
                 </div>
@@ -229,7 +323,7 @@ export function Group() {
                   <button
                     type="button"
                     onClick={handleAddUid}
-                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors whitespace-nowrap"
+                    className="px-4 py-2 hover:bg-gray-300 bg-gray-200 text-black font-semibold rounded-lg transition-colors whitespace-nowrap"
                   >
                     追加
                   </button>
@@ -237,7 +331,7 @@ export function Group() {
               </div>
 
               {currentUsers.length > 0 && (
-                <div className="flex flex-row flex-wrap justify-center items-center px-6 gap-2 pb-10">
+                <div className="flex flex-row flex-wrap justify-center items-center px-6 gap-2">
                   <div className="hidden md:block md:w-[20%]" />
                   
                   <div className="w-[80%] md:w-[60%] flex flex-wrap gap-2">
@@ -260,6 +354,14 @@ export function Group() {
                   </div>
                 </div>
               )}
+            </div>
+            <div className="w-full flex justify-center pt-20">
+              <button 
+                onClick={() => createGroup()}
+                className="text-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg"
+              >
+                作成
+              </button>
             </div>
           </div>
 

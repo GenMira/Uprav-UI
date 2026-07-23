@@ -237,7 +237,7 @@ export default function Home() {
         {/* {activeTab === "welcome" && <Welcome />} */}
         {activeTab === "showTasks" && <ShowTask setEditingTaskID={setEditingTaskID} setActiveTab={setActiveTab}/>}
         {activeTab === "editTask" && editingTaskID !== null && <EditTask editingTaskID={editingTaskID} setEditingTaskID={setEditingTaskID} setActiveTab={setActiveTab}/>}
-        {activeTab === "group" && <Group />}
+        {activeTab === "group" && <Group uid={userID}/>}
       </main>
       
       <Toaster position="top-center" reverseOrder={false} />
