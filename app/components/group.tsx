@@ -1,3 +1,4 @@
+import type { UUID } from "crypto";
 import { useState, useEffect } from "react";
 import toast from 'react-hot-toast';
 
@@ -253,6 +254,31 @@ export function Group({uid}:{uid:string | null}) {
     setCurrentUsers(group.members || []); // 既存のメンバーをセット
   };
 
+  const deleteGroup = async () =>{
+  const token = localStorage.getItem("token");
+  if (!selectedGroup) return;
+  try {
+    const response = await fetch(`https://uprav.trap.show/api/groups/${selectedGroup.id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) throw new Error("Failed to delete group");
+
+    setGroups((prev) =>
+      prev.filter((g) => g.id !== selectedGroup.id)
+    );
+
+    resetGroupData();
+    toast.success("グループを削除しました！");
+  } catch (error) {
+    toast.error("グループの削除に失敗しました");
+  }
+  };
+
     
 
   useEffect(() => {
@@ -280,7 +306,7 @@ export function Group({uid}:{uid:string | null}) {
             groups.map((group, index) => (
               <li
                 key={`${group.id}-${index}`}
-                onClick={() => handleOpenEditModal(group)} // 💡 編集用ハンドラーの実行
+                onClick={() => handleOpenEditModal(group)} 
                 className="flex flex-col items-start gap-3 p-4 pl-6 card-interactive relative overflow-hidden bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow cursor-pointer"
               >
                 <div className="absolute top-0 left-0 bottom-0 w-2 bg-green-400" />
@@ -314,12 +340,29 @@ export function Group({uid}:{uid:string | null}) {
             className="bg-white rounded-2xl p-10 w-[60%] mx-4 shadow-2xl relative"
             onClick={(e) => e.stopPropagation()}
           >
-            <button
-              onClick={resetGroupData}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl"
-            >
-              ✕
-            </button>
+            <div className="absolute top-4 right-4 flex items-center gap-5">
+              {isEditing && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (window.confirm("本当にこのグループを削除しますか？")) {
+                      deleteGroup();
+                    }
+                  }}
+                  className="text-xl text-red-500 hover:text-red-700 hover:bg-red-50 px-3 py-1 rounded-md transition-colors font-medium"
+                >
+                  削除
+                </button>
+              )}
+
+              <button
+                type="button"
+                onClick={resetGroupData}
+                className="text-gray-400 hover:text-gray-600 text-2xl"
+              >
+                ✕
+              </button>
+            </div>
             
             <div className="text-center text-black font-bold">
               {isEditing ? "グループを編集" : "グループを新規作成"}
