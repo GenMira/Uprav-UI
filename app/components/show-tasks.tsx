@@ -1,23 +1,7 @@
 import { useState, useEffect } from "react";
 import toast from 'react-hot-toast';
+import type { Task,ShowTaskProps } from "~/interface";
 
-interface Task {
-  id: number;
-  name: string;
-  priority: number;
-  tag: string;
-  deadline: string;
-  is_everyday: boolean;
-  description?: string | null;
-  period?: string | null;
-  group?: string | null;
-  assign?: string | null;
-}
-
-interface ShowTaskProps {
-  setEditingTaskID: (id: number | null) => void;
-  setActiveTab: (tab: string) => void;
-}
 
 const priorityColors = [
   // "#77C6FF", // 1
@@ -294,7 +278,7 @@ export function ShowTask({ setEditingTaskID, setActiveTab }: ShowTaskProps) {
                         .filter((tag) => tag && tag.trim() !== "")
                     )
                   ).map((tag) => (
-                    <option key={tag} value={tag}>
+                    <option key={tag} value={tag ?? ""}>
                       {tag}
                     </option>
                   ))}
@@ -453,13 +437,12 @@ export function ShowTask({ setEditingTaskID, setActiveTab }: ShowTaskProps) {
                   </span>
                 </div>
               )}
-              
-              {selectedTask.assign && (
+              {selectedTask.assign_group && (
                 <div>
-                  <p className="text-sm text-gray-400 font-bold">担当者</p>
-                  <p className="text-base text-gray-700">👤 {selectedTask.assign}</p>
+                  <p className="text-sm text-gray-400 font-bold">割り当てソース</p>
+                  <p className="text-base text-gray-700">{selectedTask.assign_group} / {selectedTask.assigner}</p>
                 </div>
-              )}
+              )}             
 
               {selectedTask.description && (
                 <div>

@@ -1,17 +1,8 @@
 import type { UUID } from "crypto";
 import { useState, useEffect } from "react";
 import toast from 'react-hot-toast';
+import type { Group,GroupMember } from "~/interface";
 
-interface GroupMember {
-  uid: number;
-  name: string;
-}
-
-interface Group {
-  id: string;
-  name: string;
-  members: [GroupMember, ...GroupMember[]]; 
-}
 
 export function Group({uid}:{uid:string | null}) {
   const [groups, setGroups] = useState<Group[]>([]);
@@ -255,28 +246,28 @@ export function Group({uid}:{uid:string | null}) {
   };
 
   const deleteGroup = async () =>{
-  const token = localStorage.getItem("token");
-  if (!selectedGroup) return;
-  try {
-    const response = await fetch(`https://uprav.trap.show/api/groups/${selectedGroup.id}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const token = localStorage.getItem("token");
+    if (!selectedGroup) return;
+    try {
+      const response = await fetch(`https://uprav.trap.show/api/groups/${selectedGroup.id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    if (!response.ok) throw new Error("Failed to delete group");
+      if (!response.ok) throw new Error("Failed to delete group");
 
-    setGroups((prev) =>
-      prev.filter((g) => g.id !== selectedGroup.id)
-    );
+      setGroups((prev) =>
+        prev.filter((g) => g.id !== selectedGroup.id)
+      );
 
-    resetGroupData();
-    toast.success("グループを削除しました！");
-  } catch (error) {
-    toast.error("グループの削除に失敗しました");
-  }
+      resetGroupData();
+      toast.success("グループを削除しました！");
+    } catch (error) {
+      toast.error("グループの削除に失敗しました");
+    }
   };
 
     

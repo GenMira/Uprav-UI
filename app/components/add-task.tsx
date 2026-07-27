@@ -1,19 +1,8 @@
+import type { UUID } from "crypto";
 import { useState,useEffect } from "react";
 import toast from 'react-hot-toast';
-// interface AddTaskProps {
-//   onAddTask: (task: string) => void;
-// }
-interface TaskRequest {
-  name: string;
-  priority: number;
-  deadline: string;
-  is_everyday: boolean;
-  tag?: string|null;
-  description?: string| null;
-  period?: string | null;
-  group?: string | null;
-  assign?: string | null;
-}
+import type { TaskRequest,Group,GroupMember } from "~/interface";
+
 
 //export function AddTask({ onAddTask }: AddTaskProps) {
 export function AddTask() {
@@ -22,6 +11,9 @@ export function AddTask() {
   const [priority, setPriority] = useState<number>(1);
   const [deadline, setDeadline] = useState("");
   const [isEverydayTask, setIsEverydayTask] = useState<boolean>(false);
+  const [assignGroupID,setAssignGroupID] = useState<string>("");
+  const [groups, setGroups] = useState<Group[]>([]);
+  const [assigneeUid, setAssigneeUid] = useState<string>("");
   const [description, setDescription] = useState("");
 
   const [existingTags, setExistingTags] = useState<string[]>([]);
@@ -37,6 +29,8 @@ export function AddTask() {
     setDeadline("");
     setIsEverydayTask(false);
     setDescription("");
+    setAssignGroupID(""); 
+    setAssigneeUid("");
   }
 
   const addTask = async () => {
@@ -79,6 +73,15 @@ export function AddTask() {
     if (!token) {
       toast.error("トークンが見つかりません。ログインしてください。");
       return;
+    }
+
+    if (assigneeUid===""){
+      console.log("[addTask]add task myself")
+    }
+    else{
+      console.log("[addTask]add task for others")
+      newTask.assignee = parseInt(assigneeUid, 10);
+      newTask.assignGroup = assignGroupID;
     }
 
     try {
@@ -126,8 +129,48 @@ export function AddTask() {
     }
   };
 
+  const getGroups = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      toast.error("トークンが見つかりません。ログインしてください。");
+      return;
+    }
+    try {
+      const response = await fetch("https://uprav.trap.show/api/groups", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          console.log("グループが存在しません（404）");
+          setGroups([]);
+          return;
+        }
+
+        // 404 以外（500エラーなど）は、ステータスを付与したカスタムエラーを投げて catch に飛ばす
+        const errorWithStatus = new Error("Failed to fetch groups") as any;
+        errorWithStatus.status = response.status;
+        throw errorWithStatus;
+      }
+
+      const groups = await response.json();
+      console.log("success:", groups);
+      setGroups(groups);
+
+    } catch (error: any) {
+      console.error("エラー:", error);
+      console.log(error.message);
+      toast.error("通信エラーが発生しました");
+    }
+  };
+
   useEffect(() => {
     getTags();
+    getGroups();
   }, []);
 
   return (
@@ -225,6 +268,49 @@ export function AddTask() {
             onChange={(e) => setIsEverydayTask(e.target.checked)}
             className="w-5 h-5 bg-white accent-blue-500 cursor-pointer"
           />
+        </div>
+      </div>
+      <div className="flex flex-col w-full w-full justify-center items-center px-6 pt-10 pb-10 gap-5">
+        <div className="flex flex-col md:flex-row justify-center items-center w-full gap-2">
+          <div className="md:w-[20%] text-black">タスクを割り当て</div>
+          <select
+            onChange={(e) => {
+              const val = e.target.value;
+              setAssignGroupID(val);
+            }}
+            className="w-[80%] md:w-[60%] p-2 bg-white text-black border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">-</option>
+            
+            {groups.map((group) => (
+              <option key={group.id} value={group.id}>
+                {group.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="flex flex-col md:flex-row justify-center items-center w-full gap-2">
+          <div className="md:w-[20%] text-black font-medium">担当者</div>
+          <select
+            value={assigneeUid}
+            onChange={(e) => setAssigneeUid(e.target.value)}
+            disabled={!assignGroupID} // グループ未選択時は操作不可
+            className="w-[80%] md:w-[60%] p-2 bg-white text-black border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer disabled:bg-gray-100 disabled:text-gray-400"
+          >
+            <option value="">
+              {!assignGroupID ? "グループを選択してください" : "-"}
+            </option>
+
+            {groups.map((group) => {
+              if (group.id === assignGroupID){
+                return group.members.map((member)=>(
+                  <option key={member.uid} value={member.uid}>
+                    {member.name} ({member.uid})
+                  </option>
+                ))
+              }
+            })}
+          </select>
         </div>
       </div>
       {/* <div className="flex flex-row w-full w-full justify-center items-center px-6 gap-2 pt-10 pb-10">

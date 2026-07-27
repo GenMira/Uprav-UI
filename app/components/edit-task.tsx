@@ -1,22 +1,6 @@
 import { useState, useEffect } from "react";
 import toast from 'react-hot-toast';
-
-interface Task {
-  id:number;
-  name: string;
-  priority: number;
-  deadline: string;
-  is_everyday: boolean;
-  tag?: string|null;
-  description?: string| null;
-  period?: string | null;
-  group?: string | null;
-  assign?: string | null;
-}
-interface ShowTaskProps {
-  setEditingTaskID: (id: number | null) => void;
-  setActiveTab: (tab: string) => void;
-}
+import type { Task } from "~/interface";
 
 export function EditTask({editingTaskID, setEditingTaskID, setActiveTab}: {editingTaskID: number, setEditingTaskID: (id: number | null) => void, setActiveTab: (tab: string) => void }) {
   const [taskName, setTaskName] = useState("");
